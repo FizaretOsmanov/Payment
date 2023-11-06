@@ -1,14 +1,13 @@
 package com.code.repository;
 
-import java.util.Set;
-
+import com.code.model.BillPayment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.code.model.BillPayment;
+import java.util.Set;
 
 @Repository
 public interface BillPaymentDao extends JpaRepository<BillPayment, Integer>{
-	
-	public Set<BillPayment> findByWalletId(Integer walletId);
+
+	Set<BillPayment> findByWalletId(Integer walletId);
 }

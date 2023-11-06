@@ -1,20 +1,19 @@
 package com.code.service;
 
-import java.util.List;
-
 import com.code.exception.BeneficiaryDetailException;
 import com.code.model.BeneficiaryDetail;
-import com.code.model.Customer;
+
+import java.util.List;
 
 public interface BeneficiaryDetailServices {
-	public BeneficiaryDetail addBeneficiary(String uniqueId, BeneficiaryDetail beneficiaryDetail)
+	BeneficiaryDetail addBeneficiary(String uniqueId, BeneficiaryDetail beneficiaryDetail)
 			throws BeneficiaryDetailException;
 
-	public BeneficiaryDetail deleteBeneficiary(String uniqueId, String benficiaryMobileNo)
+	BeneficiaryDetail deleteBeneficiary(String uniqueId, String benficiaryMobileNo)
 			throws BeneficiaryDetailException;
 
-	public List<BeneficiaryDetail> viewBeneficiaryByMobileNo(String beneficiaryMobileNo)
+	List<BeneficiaryDetail> viewBeneficiaryByMobileNo(String beneficiaryMobileNo)
 			throws BeneficiaryDetailException;
 
-	public List<BeneficiaryDetail> viewAllBeneficiary(String uniqueId) throws BeneficiaryDetailException;
+	List<BeneficiaryDetail> viewAllBeneficiary(String uniqueId) throws BeneficiaryDetailException;
 }

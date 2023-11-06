@@ -1,11 +1,5 @@
 package com.code.service;
 
-import java.time.LocalDateTime;
-import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.code.exception.LoginException;
 import com.code.model.CurrentSessionUser;
 import com.code.model.Customer;
@@ -13,21 +7,23 @@ import com.code.model.LogIn;
 import com.code.repository.CustomerDAO;
 import com.code.repository.LogInDAO;
 import com.code.repository.SessionDAO;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class LoginServiceImpl implements LoginService{
 
-	@Autowired
-	private CustomerDAO signUpDAO;
-	
-	@Autowired
-	private SessionDAO SessionDAO;
-	
-	@Autowired
-	private CurrentUserSessionService getCurrentLoginUserSession;
-	
-	@Autowired
-	private LogInDAO loginDAO;
+	private final CustomerDAO signUpDAO;
+
+	private final SessionDAO SessionDAO;
+
+	private final CurrentUserSessionService getCurrentLoginUserSession;
+
+	private final LogInDAO loginDAO;
 	
 	
 
@@ -35,7 +31,7 @@ public class LoginServiceImpl implements LoginService{
 	public String logInAccount(LogIn loginData) throws LoginException {
 		Optional<Customer> options = signUpDAO.findByMobileNo(loginData.getMobileNo());
 		
-		if(!options.isPresent()) {
+		if(options.isEmpty()) {
 			throw new LoginException("Invalid mobile Number ");
 		}
 		
@@ -50,7 +46,7 @@ public class LoginServiceImpl implements LoginService{
 		if(currentSessionUser.isPresent()) {
 			throw new LoginException("User already login with this userId");
 		}
-		
+
 		if((newSignUp.getMobileNo().equals(loginData.getMobileNo()))  && newSignUp.getPassword().equals(loginData.getPassword())) {
 			String key = RandomString.getRandomString();
 			CurrentSessionUser currentSessionUser2 = new CurrentSessionUser(newSignUp.getUserId(), key, newSignUp.getMobileNo(),LocalDateTime.now());
@@ -68,19 +64,19 @@ public class LoginServiceImpl implements LoginService{
 	public String logOutFromAccount(String key) throws LoginException {
 		Optional<CurrentSessionUser> currentSessionuserOptional = SessionDAO.findByUuid(key);
 		
-		if(!currentSessionuserOptional.isPresent()) {
-			throw new LoginException("User has not looged in with this Userid");
+		if(currentSessionuserOptional.isEmpty()) {
+			throw new LoginException("User has not logged in with this Userid");
 		}
 		
 		CurrentSessionUser currentSessionUser =getCurrentLoginUserSession.getCurrentUserSession(key);
 		
 		SessionDAO.delete(currentSessionUser);
 		
-		Optional<LogIn> logindata = loginDAO.findById(currentSessionuserOptional.get().getUserId());
+		Optional<LogIn> loginData = loginDAO.findById(currentSessionuserOptional.get().getUserId());
 		
-		loginDAO.delete(logindata.get());
+		loginDAO.delete(loginData.get());
 		
-		return "Logged Out Succefully....";
+		return "Logged Out Successfully....";
 	}
 	
 

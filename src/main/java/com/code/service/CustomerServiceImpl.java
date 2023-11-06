@@ -2,6 +2,7 @@ package com.code.service;
 
 import java.util.Optional;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,16 +13,14 @@ import com.code.repository.CustomerDAO;
 import com.code.repository.WalletDao;
 
 @Service
+@RequiredArgsConstructor
 public class CustomerServiceImpl implements CustomerService{
-	
-	@Autowired
-	private CustomerDAO signUpDAO;
-	
-	@Autowired
-	private WalletDao walletDao;
- 	
-	@Autowired
-	private CurrentUserSessionService getCurrentLoginUserSession;
+
+	private final CustomerDAO signUpDAO;
+
+	private final WalletDao walletDao;
+
+	private final CurrentUserSessionService getCurrentLoginUserSession;
 
 	@Override
 	public Customer createNewSignUp(Customer newSignUp) throws LoginException {
@@ -49,7 +48,7 @@ public class CustomerServiceImpl implements CustomerService{
 			throw new LoginException("UnAuthorized!!! No User Found....Try To login first!");
 		}
 		
-		if(signUpDetails.getUserId() == signUp.getUserId())
+		if(signUpDetails.getUserId().equals(signUp.getUserId()))
 			{
 			signUpDAO.save(signUp);
 			return signUp;

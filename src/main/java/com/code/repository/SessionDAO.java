@@ -1,20 +1,18 @@
 package com.code.repository;
 
-import java.util.Optional;
-
+import com.code.model.CurrentSessionUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.code.model.CurrentSessionUser;
-import com.code.model.Customer;
+import java.util.Optional;
 
 @Repository
 public interface SessionDAO extends JpaRepository<CurrentSessionUser, Integer> {
 
-	public Optional<CurrentSessionUser> findByUserId(Integer userId);
+	Optional<CurrentSessionUser> findByUserId(Integer userId);
 
-	public Optional<CurrentSessionUser> findByUuid(String uuid);
+	Optional<CurrentSessionUser> findByUuid(String uuid);
 
-	public Optional<CurrentSessionUser> findByMobileNo(String uuid);
+	Optional<CurrentSessionUser> findByMobileNo(String uuid);
 
 }

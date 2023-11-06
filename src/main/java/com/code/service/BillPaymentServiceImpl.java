@@ -1,46 +1,31 @@
 package com.code.service;
 
+import com.code.exception.InsufficientBalanceException;
+import com.code.exception.UserNotLogedinException;
+import com.code.model.*;
+import com.code.repository.*;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.code.exception.InsufficientBalanceException;
-import com.code.exception.UserNotLogedinException;
-import com.code.model.BillPayment;
-import com.code.model.CurrentSessionUser;
-import com.code.model.Customer;
-import com.code.model.Transaction;
-import com.code.model.Wallet;
-import com.code.repository.BankAccountDao;
-import com.code.repository.BillPaymentDao;
-import com.code.repository.CustomerDAO;
-import com.code.repository.SessionDAO;
-import com.code.repository.TransactionDao;
-import com.code.repository.WalletDao;
-
 @Service
+@RequiredArgsConstructor
 public class BillPaymentServiceImpl implements BillPaymentService {
 
-	@Autowired
-	private BillPaymentDao billDao;
+	private final BillPaymentDao billDao;
 
-	@Autowired
-	private SessionDAO sessionDao;
+	private final SessionDAO sessionDao;
 
-	@Autowired
-	private CustomerDAO cDao;
+	private final CustomerDAO cDao;
 
-	@Autowired
-	private BankAccountDao bankAccoundDao;
+	private final BankAccountDao bankAccountDao;
 
-	@Autowired
-	private WalletDao walletDao;
+	private final WalletDao walletDao;
 
-	@Autowired
-	private TransactionDao transactionDao;
+	private final TransactionDao transactionDao;
 
 	@Override
 	public BillPayment makeBillPayment(BillPayment billpayment, String uniqueId)
@@ -68,7 +53,7 @@ public class BillPaymentServiceImpl implements BillPaymentService {
 
 		if (completedPayment != null) {
 			Transaction transaction = new Transaction();
-			transaction.setDescription(billpayment.getBilltype() + " successfull");
+			transaction.setDescription(billpayment.getBilltype() + " successful");
 			transaction.setAmount(billpayment.getAmount());
 			transaction.setTransactionDate(LocalDateTime.now());
 			transaction.setTransactionType(billpayment.getTransactionType());
@@ -92,8 +77,8 @@ public class BillPaymentServiceImpl implements BillPaymentService {
 		Optional<Customer> customer = cDao.findById(currentUser.get().getUserId());
 		Wallet wallet = customer.get().getWallet();
 
-		Set<BillPayment> billpaymnets = billDao.findByWalletId(wallet.getWalletId());
-		return billpaymnets;
+		Set<BillPayment> billPayments = billDao.findByWalletId(wallet.getWalletId());
+		return billPayments;
 	}
 
 }

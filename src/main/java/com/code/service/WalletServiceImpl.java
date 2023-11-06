@@ -1,67 +1,34 @@
 package com.code.service;
 
-import java.lang.StackWalker.Option;
-import java.math.BigDecimal;
-import java.time.LocalDate;
+import com.code.exception.*;
+import com.code.model.*;
+import com.code.repository.*;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
-
-import javax.naming.InsufficientResourcesException;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PutMapping;
-
-import com.code.exception.BankAccountNotExsists;
-import com.code.exception.BeneficiaryDetailException;
-import com.code.exception.CustomerNotException;
-import com.code.exception.InsufficientBalanceException;
-import com.code.exception.LoginException;
-import com.code.exception.NotAnyBankAddedYet;
-import com.code.model.BankAccount;
-import com.code.model.BeneficiaryDetail;
-import com.code.model.CurrentSessionUser;
-import com.code.model.Customer;
-import com.code.model.Transaction;
-import com.code.model.TransactionType;
-import com.code.model.Wallet;
-import com.code.repository.BankAccountDao;
-import com.code.repository.BeneficiaryDetailDao;
-import com.code.repository.CustomerDAO;
-import com.code.repository.LogInDAO;
-import com.code.repository.SessionDAO;
-import com.code.repository.TransactionDao;
-import com.code.repository.WalletDao;
 
 @Service
+@RequiredArgsConstructor
 public class WalletServiceImpl implements WalletService {
-	
-	@Autowired
-	private TransactionDao transactiodao;
-	
-	@Autowired
-	private TranscationServiceImpl transactionserviceImpl;
-	
-	@Autowired
-	private BankAccountDao bankaccountdao;
-	
-	@Autowired
-	private BeneficiaryDetailDao beneficiaryDetailDao;
-	
-	
-	@Autowired
-	private WalletDao walletDao;
-	
-	@Autowired
-	private CustomerDAO customerDAO;
-	
-	@Autowired
-	private SessionDAO currentSessionDAO;
-	
-	@Autowired
-	private LogInDAO logindao;
+
+	private final TransactionDao transactionDao;
+
+	private final TransactionServiceImpl transactionServiceImpl;
+
+	private final BankAccountDao bankaccountdao;
+
+	private final BeneficiaryDetailDao beneficiaryDetailDao;
+
+	private final WalletDao walletDao;
+
+	private final CustomerDAO customerDAO;
+
+	private final SessionDAO currentSessionDAO;
+
+	private final LogInDAO logindao;
 	
 	
 	
@@ -70,14 +37,13 @@ public class WalletServiceImpl implements WalletService {
 		
 		Optional<CurrentSessionUser> currentSessionOptional = currentSessionDAO.findByUuid(uniqueId);
 		
-		if(!currentSessionOptional.isPresent()) {
+		if(currentSessionOptional.isEmpty()) {
 			throw new LoginException("You need to login first");
 		}
 
 		Optional<Customer> customer =  customerDAO.findById(currentSessionOptional.get().getUserId());
 		Wallet wallet =  customer.get().getWallet();
-		Double balance = wallet.getBalance();
-		return balance;
+        return wallet.getBalance();
 	}
 
 
@@ -98,7 +64,7 @@ public class WalletServiceImpl implements WalletService {
 		Boolean flag=true;
 		List<BeneficiaryDetail> beneficiarydetails = wallet.getBeneficiaryDetails();
 		
-		if(beneficiarydetails==null || beneficiarydetails.size()==0) {
+		if(beneficiarydetails==null || beneficiarydetails.isEmpty()) {
 			throw new BeneficiaryDetailException("You need to add beneficiary to you wallet");
 		}
 		
@@ -124,7 +90,7 @@ public class WalletServiceImpl implements WalletService {
 		}
 		Customer tragetCustomer = tragetopt.get();
 		
-		if(wallet.getBalance()<amout || wallet.getBalance()==null) {
+		if(wallet.getBalance()<amout) {
 			throw new InsufficientBalanceException("Insufficent balance");
 		}
 		
@@ -144,7 +110,7 @@ public class WalletServiceImpl implements WalletService {
         transaction.setDescription("Fund Transfer from Wallet to Wallet Successfull !");
         transaction.setWalletId(wallet.getWalletId());
         wallet.getTransaction().add(transaction);
-        transactiodao.save(transaction);
+        transactionDao.save(transaction);
 		
 		
 		return transaction;
@@ -189,30 +155,31 @@ public class WalletServiceImpl implements WalletService {
         transaction.setTransactionType(TransactionType.WALLET_TO_BANK);
         transaction.setTransactionDate(LocalDateTime.now());
         transaction.setAmount(amount);
-        transaction.setDescription("Fund Transfer from Wallet to Bank is successfull!");
+        transaction.setDescription("Fund Transfer from Wallet to Bank is successful!");
         transaction.setWalletId(wallet.getWalletId());
         wallet.getTransaction().add(transaction);
-        transactiodao.save(transaction);  
+        transactionDao.save(transaction);
         return transaction;
 	}
 
 	@Override
-	public List<BeneficiaryDetail> getList(String uniqueId) throws CustomerNotException, LoginException, BeneficiaryDetailException {
+	public List<BeneficiaryDetail> getList(String uniqueId)
+			throws CustomerNotException, LoginException, BeneficiaryDetailException {
 		
-			Optional<CurrentSessionUser> currentuser = currentSessionDAO.findByUuid(uniqueId);
-			System.out.println(currentuser.get());
+			Optional<CurrentSessionUser> currentUser = currentSessionDAO.findByUuid(uniqueId);
+			System.out.println(currentUser.get());
 			
-			if(!currentuser.isPresent()) {
+			if(!currentUser.isPresent()) {
 				throw new LoginException("You need to login first");
 			}
 			
-			Optional<Customer> custOptional = customerDAO.findById(currentuser.get().getUserId());
+			Optional<Customer> custOptional = customerDAO.findById(currentUser.get().getUserId());
 			Customer curruser = custOptional.get();
 			Wallet wallet = curruser.getWallet();
 			
-			List<BeneficiaryDetail> beneficiarydetails = wallet.getBeneficiaryDetails();
+			List<BeneficiaryDetail> beneficiaryDetails = wallet.getBeneficiaryDetails();
 			
-			if(beneficiarydetails==null) {
+			if(beneficiaryDetails==null) {
 				throw new BeneficiaryDetailException("You need to add beneficiary to your wallet");
 			}
 		
@@ -221,7 +188,8 @@ public class WalletServiceImpl implements WalletService {
 	}
 
 	
-	public Customer addMoney(String uniqueId, Double amount) throws LoginException, CustomerNotException, InsufficientBalanceException {
+	public Customer addMoney(String uniqueId, Double amount)
+			throws LoginException, CustomerNotException, InsufficientBalanceException {
 
 		Optional<CurrentSessionUser> currOptional = currentSessionDAO.findByUuid(uniqueId);
 		
@@ -256,11 +224,11 @@ public class WalletServiceImpl implements WalletService {
         transaction.setTransactionDate(LocalDateTime.now());
         transaction.setAmount(amount);
 
-        transaction.setDescription("Fund Transfer from Bank to Wallet is successfull !");
+        transaction.setDescription("Fund Transfer from Bank to Wallet is successful!");
         transaction.setWalletId(wallet.getWalletId());
         
         wallet.getTransaction().add(transaction);
-        transactiodao.save(transaction);
+        transactionDao.save(transaction);
         
         return currcustomer;
 		

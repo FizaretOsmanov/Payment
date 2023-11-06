@@ -1,21 +1,28 @@
 package com.code.model;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.time.LocalDateTime;
 
+@Getter
+@Setter
 @Entity
+@Data
+@AllArgsConstructor
+@RequiredArgsConstructor
+@Table(name = "transaction")
 public class Transaction {
 
 	@Id
@@ -34,56 +41,6 @@ public class Transaction {
 	private String description;
     
     private Integer  walletId;
-  
-
-	public Integer getTransactionId() {
-		return transactionId;
-	}
-
-	public void setTransactionId(Integer transactionId) {
-		this.transactionId = transactionId;
-	}
-
-	public TransactionType getTransactionType() {
-		return transactionType;
-	}
-
-	public void setTransactionType(TransactionType transactionType) {
-		this.transactionType = transactionType;
-	}
-
-	public void setTransactionDate(LocalDateTime transactionDate) {
-		this.transactionDate = transactionDate;
-	}
-
-	public double getAmount() {
-		return amount;
-	}
-
-	public void setAmount(double amount) {
-		this.amount = amount;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public LocalDateTime getTransactionDate() {
-		return transactionDate;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public Integer getWalletId() {
-		return walletId;
-	}
-
-	public void setWalletId(Integer walletId) {
-		this.walletId = walletId;
-	}
-
 
     @Override
 	public String toString() {

@@ -1,14 +1,14 @@
 package com.code.service;
 
-import java.util.Set;
-
 import com.code.exception.InsufficientBalanceException;
 import com.code.exception.UserNotLogedinException;
 import com.code.model.BillPayment;
 
-public interface BillPaymentService {
-	
-	public BillPayment makeBillPayment(BillPayment billpayment,String uniqueId) throws InsufficientBalanceException, UserNotLogedinException;
+import java.util.Set;
 
-	public Set<BillPayment> viewBillPayments(String uniqueId) throws UserNotLogedinException;
+public interface BillPaymentService {
+
+	BillPayment makeBillPayment(BillPayment billpayment, String uniqueId) throws InsufficientBalanceException, UserNotLogedinException;
+
+	Set<BillPayment> viewBillPayments(String uniqueId) throws UserNotLogedinException;
 }

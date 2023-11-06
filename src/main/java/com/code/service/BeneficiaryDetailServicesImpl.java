@@ -1,11 +1,5 @@
 package com.code.service;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.code.exception.BeneficiaryDetailException;
 import com.code.model.BeneficiaryDetail;
 import com.code.model.CurrentSessionUser;
@@ -15,17 +9,23 @@ import com.code.repository.BeneficiaryDetailDao;
 import com.code.repository.CustomerDAO;
 import com.code.repository.SessionDAO;
 import com.code.repository.WalletDao;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class BeneficiaryDetailServicesImpl implements BeneficiaryDetailServices {
-	@Autowired
-	private BeneficiaryDetailDao bDao;
-	@Autowired
-	private SessionDAO sDao;
-	@Autowired
-	private WalletDao wDao;
-	@Autowired
-	private CustomerDAO customerDao;
+
+	private final BeneficiaryDetailDao bDao;
+
+	private final SessionDAO sDao;
+
+	private final WalletDao wDao;
+
+	private final CustomerDAO customerDao;
 	
 
 	@Override
@@ -51,7 +51,7 @@ public class BeneficiaryDetailServicesImpl implements BeneficiaryDetailServices 
 	}
 
 	@Override
-	public BeneficiaryDetail deleteBeneficiary(String uniqueId,String benficiaryMobile) throws BeneficiaryDetailException {
+	public BeneficiaryDetail deleteBeneficiary(String uniqueId,String beneficiaryMobile) throws BeneficiaryDetailException {
 		Optional<CurrentSessionUser> currentSessionUser= sDao.findByUuid(uniqueId);
 		if(currentSessionUser.isPresent()) {
 			Optional<Customer> userOptional=customerDao.findById(currentSessionUser.get().getUserId());
@@ -62,7 +62,7 @@ public class BeneficiaryDetailServicesImpl implements BeneficiaryDetailServices 
 				if(!list.isEmpty()) {
 					int index=-1;
 					for(int i=0;i<list.size();i++) {
-						if(list.get(i).getBeneficiaryMobileNo().equals(benficiaryMobile)) {
+						if(list.get(i).getBeneficiaryMobileNo().equals(beneficiaryMobile)) {
 							index=i;
 							break;
 						}
@@ -91,7 +91,7 @@ public class BeneficiaryDetailServicesImpl implements BeneficiaryDetailServices 
 
 	@Override
 	public List<BeneficiaryDetail> viewBeneficiaryByMobileNo(String beneficiaryMobileNo) throws BeneficiaryDetailException {
-		List<BeneficiaryDetail> beneficiaryDetail=bDao.findBybeneficiaryMobileNo(beneficiaryMobileNo);
+		List<BeneficiaryDetail> beneficiaryDetail=bDao.findByBeneficiaryMobileNo(beneficiaryMobileNo);
 		if(beneficiaryDetail.isEmpty()) {
 			throw new BeneficiaryDetailException("No Beneficiary found with Mobile No : "+beneficiaryMobileNo);
 		}else {

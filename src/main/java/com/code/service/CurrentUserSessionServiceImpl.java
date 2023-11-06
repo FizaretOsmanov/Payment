@@ -2,6 +2,7 @@ package com.code.service;
 
 import java.util.Optional;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,13 +13,12 @@ import com.code.repository.CustomerDAO;
 import com.code.repository.SessionDAO;
 
 @Service
+@RequiredArgsConstructor
 public class CurrentUserSessionServiceImpl implements CurrentUserSessionService {
 
-	@Autowired
-	private SessionDAO sessionDAO;
+	private final SessionDAO sessionDAO;
 
-	@Autowired
-	private CustomerDAO signUpDAO;
+	private final CustomerDAO signUpDAO;
 
 	@Override
 	public CurrentSessionUser getCurrentUserSession(String key) throws LoginException {

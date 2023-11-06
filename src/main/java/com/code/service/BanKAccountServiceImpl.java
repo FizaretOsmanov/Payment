@@ -1,12 +1,6 @@
 package com.code.service;
 
-import java.util.Optional;
-import java.util.Set;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.code.exception.BankAccountNotExsists;
+import com.code.exception.BankAccountNotExists;
 import com.code.exception.BankAlreadyAdded;
 import com.code.exception.NotAnyBankAddedYet;
 import com.code.exception.UserNotLogedinException;
@@ -18,23 +12,22 @@ import com.code.repository.BankAccountDao;
 import com.code.repository.CustomerDAO;
 import com.code.repository.LogInDAO;
 import com.code.repository.SessionDAO;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class BanKAccountServiceImpl implements BankAccountService {
 
-	@Autowired
-	private BankAccountDao bankDao;
+	private final BankAccountDao bankDao;
 
-	@Autowired
-	private SessionDAO sessionDao;
+	private final SessionDAO sessionDao;
 
-	@Autowired
-	private CustomerDAO cDao;
+	private final CustomerDAO cDao;
 
-	@Autowired
-	private LogInDAO logInDAO;
+	private final LogInDAO logInDAO;
 
 	@Override
 	public BankAccount addBank(BankAccount bankAccount, String uniqueId)
@@ -64,7 +57,7 @@ public class BanKAccountServiceImpl implements BankAccountService {
 
 	@Override
 	public BankAccount removeBank(Integer accountNumber, String uniqueId)
-			throws BankAccountNotExsists, UserNotLogedinException {
+			throws BankAccountNotExists, UserNotLogedinException {
 		Optional<CurrentSessionUser> currentUser = sessionDao.findByUuid(uniqueId);
 
 		if (!currentUser.isPresent()) {
@@ -81,7 +74,7 @@ public class BanKAccountServiceImpl implements BankAccountService {
 
 	@Override
 	public BankAccount viewBankAccountI(Integer accountNumber, String uniqueId)
-			throws BankAccountNotExsists, UserNotLogedinException {
+			throws BankAccountNotExists, UserNotLogedinException {
 
 		Optional<CurrentSessionUser> currentUser = sessionDao.findByUuid(uniqueId);
 
@@ -94,7 +87,7 @@ public class BanKAccountServiceImpl implements BankAccountService {
 		if (bankAccount.isPresent()) {
 			return bankAccount.get();
 		} else {
-			throw new BankAccountNotExsists(
+			throw new BankAccountNotExists(
 					"Bank account is not existed with current account Number :" + accountNumber);
 		}
 
@@ -102,7 +95,7 @@ public class BanKAccountServiceImpl implements BankAccountService {
 
 	@Override
 	public BankAccount viewAllAccount(String uniqueId)
-			throws UserNotLogedinException, NotAnyBankAddedYet, BankAccountNotExsists {
+			throws UserNotLogedinException, NotAnyBankAddedYet, BankAccountNotExists {
 		Optional<CurrentSessionUser> currentUser = sessionDao.findByUuid(uniqueId);
 
 		if (!currentUser.isPresent()) {
@@ -117,7 +110,7 @@ public class BanKAccountServiceImpl implements BankAccountService {
 		if (bankAccounts != null) {
 			return bankAccounts;
 		} else {
-			throw new BankAccountNotExsists("Bank account is not existed in current user ");
+			throw new BankAccountNotExists("Bank account is not existed in current user ");
 		}
 
 	}
