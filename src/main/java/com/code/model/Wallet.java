@@ -8,9 +8,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Id;
 import lombok.*;
-import org.springframework.data.annotation.Id;
-
 import java.util.List;
 
 @Getter
@@ -22,7 +21,6 @@ import java.util.List;
 @Table(name = "wallet")
 public class Wallet {
 
-	@jakarta.persistence.Id
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;

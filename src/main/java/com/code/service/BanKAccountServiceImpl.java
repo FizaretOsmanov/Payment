@@ -27,8 +27,6 @@ public class BanKAccountServiceImpl implements BankAccountService {
 
 	private final CustomerDAO cDao;
 
-	private final LogInDAO logInDAO;
-
 	@Override
 	public BankAccount addBank(BankAccount bankAccount, String uniqueId)
 			throws UserNotLogedinException, BankAlreadyAdded {
@@ -46,7 +44,7 @@ public class BanKAccountServiceImpl implements BankAccountService {
 
 		if (bankAc.isPresent()) {
 			throw new BankAlreadyAdded(
-					"Bank with " + bankAccount.getAccountNumber() + " this Account Nuber Already Exist");
+					"Bank with " + bankAccount.getAccountNumber() + " This Account Number Already Exist");
 		}
 
 		System.out.println(wallet.getWalletId());

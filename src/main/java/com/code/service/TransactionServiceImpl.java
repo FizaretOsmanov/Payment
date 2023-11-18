@@ -6,7 +6,6 @@ import com.code.model.*;
 import com.code.repository.CustomerDAO;
 import com.code.repository.SessionDAO;
 import com.code.repository.TransactionDao;
-import com.code.repository.WalletDao;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +18,6 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class TransactionServiceImpl implements TransactionService {
-
-	private final WalletDao walletdao;
 
 	private final CustomerDAO customerDAO;
 

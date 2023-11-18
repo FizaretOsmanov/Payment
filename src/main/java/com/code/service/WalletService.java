@@ -15,11 +15,14 @@ public interface WalletService {
 
 	Double showBalance(String mobileNo) throws CustomerNotException, LoginException;
 
-	Transaction fundTransfer(String sourceMoblieNo, String targetMobileNo, Double amout, String uniqueId) throws CustomerNotException, BeneficiaryDetailException, LoginException, InsufficientBalanceException;
+	Transaction fundTransfer(String sourceMobileNo, String targetMobileNo, Double amount, String uniqueId)
+			throws CustomerNotException, BeneficiaryDetailException, LoginException, InsufficientBalanceException;
 
-	Transaction depositeAmount(String uniqueId, Double amount) throws CustomerNotException, LoginException, InsufficientResourcesException, InsufficientBalanceException;
+	Transaction depositAmount(String uniqueId, Double amount)
+			throws CustomerNotException, LoginException, InsufficientResourcesException, InsufficientBalanceException;
 
-	List<BeneficiaryDetail> getList(String uniqueId) throws CustomerNotException, LoginException, BeneficiaryDetailException;
+	List<BeneficiaryDetail> getList(String uniqueId)
+			throws CustomerNotException, LoginException, BeneficiaryDetailException;
 
 	Customer addMoney(String uniqueId, Double amount) throws Exception;
 	

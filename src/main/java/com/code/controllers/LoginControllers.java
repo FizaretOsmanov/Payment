@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 public class LoginControllers {
 
 	private final LoginService loginService;
-	
+
 	@PostMapping("/login")
 	public ResponseEntity<String> loginHandler(@RequestBody LogIn loginData) throws LoginException {
 		String login = loginService.logInAccount(loginData);
@@ -27,7 +27,5 @@ public class LoginControllers {
 		String logout = loginService.logOutFromAccount(key);
 		return new ResponseEntity<>(logout, HttpStatus.OK);
 	}
-	
-	
-	
+
 }

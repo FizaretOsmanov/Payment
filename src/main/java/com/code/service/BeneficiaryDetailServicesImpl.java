@@ -23,13 +23,12 @@ public class BeneficiaryDetailServicesImpl implements BeneficiaryDetailServices 
 
 	private final SessionDAO sDao;
 
-	private final WalletDao wDao;
-
 	private final CustomerDAO customerDao;
 	
 
 	@Override
-	public BeneficiaryDetail addBeneficiary(String uniqueId,BeneficiaryDetail beneficiaryDetail) throws BeneficiaryDetailException {
+	public BeneficiaryDetail addBeneficiary(String uniqueId,BeneficiaryDetail beneficiaryDetail)
+			throws BeneficiaryDetailException {
 		Optional<CurrentSessionUser> currentSessionUser= sDao.findByUuid(uniqueId);
 		if(currentSessionUser.isPresent()) {
 			Optional<Customer> userOptional=customerDao.findById(currentSessionUser.get().getUserId());
@@ -51,7 +50,8 @@ public class BeneficiaryDetailServicesImpl implements BeneficiaryDetailServices 
 	}
 
 	@Override
-	public BeneficiaryDetail deleteBeneficiary(String uniqueId,String beneficiaryMobile) throws BeneficiaryDetailException {
+	public BeneficiaryDetail deleteBeneficiary(String uniqueId,String beneficiaryMobile)
+			throws BeneficiaryDetailException {
 		Optional<CurrentSessionUser> currentSessionUser= sDao.findByUuid(uniqueId);
 		if(currentSessionUser.isPresent()) {
 			Optional<Customer> userOptional=customerDao.findById(currentSessionUser.get().getUserId());
@@ -90,7 +90,8 @@ public class BeneficiaryDetailServicesImpl implements BeneficiaryDetailServices 
 	}
 
 	@Override
-	public List<BeneficiaryDetail> viewBeneficiaryByMobileNo(String beneficiaryMobileNo) throws BeneficiaryDetailException {
+	public List<BeneficiaryDetail> viewBeneficiaryByMobileNo(String beneficiaryMobileNo)
+			throws BeneficiaryDetailException {
 		List<BeneficiaryDetail> beneficiaryDetail=bDao.findByBeneficiaryMobileNo(beneficiaryMobileNo);
 		if(beneficiaryDetail.isEmpty()) {
 			throw new BeneficiaryDetailException("No Beneficiary found with Mobile No : "+beneficiaryMobileNo);

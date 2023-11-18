@@ -3,7 +3,6 @@ package com.code.service;
 import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.code.exception.LoginException;
@@ -22,26 +21,17 @@ public class CurrentUserSessionServiceImpl implements CurrentUserSessionService 
 
 	@Override
 	public CurrentSessionUser getCurrentUserSession(String key) throws LoginException {
-		Optional<CurrentSessionUser> currentSessionuser = sessionDAO.findByUuid(key);
+		Optional<CurrentSessionUser> currentSessionUser = sessionDAO.findByUuid(key);
 
-		if (currentSessionuser.isPresent()) {
-			return currentSessionuser.get();
+		if (currentSessionUser.isPresent()) {
+			return currentSessionUser.get();
 		} else {
 			throw new LoginException("UnAuthorized!!!");
 		}
 	}
 
 	@Override
-	public Integer getCurrentUserSessionId(String key) throws LoginException {
-		Optional<CurrentSessionUser> currentUser = sessionDAO.findByUuid(key);
-		if (!currentUser.isPresent()) {
-			throw new LoginException("UnAuthorized!!!");
-		}
-		return currentUser.get().getId();
-	}
-
-	@Override
-	public Customer getSignUpDetails(String key) throws LoginException {
+	public Customer getSignUpDetails(String key)  {
 		Optional<CurrentSessionUser> currentUser = sessionDAO.findByUuid(key);
 		if (!currentUser.isPresent()) {
 			return null;

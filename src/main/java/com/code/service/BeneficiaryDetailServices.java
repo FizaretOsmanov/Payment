@@ -9,7 +9,7 @@ public interface BeneficiaryDetailServices {
 	BeneficiaryDetail addBeneficiary(String uniqueId, BeneficiaryDetail beneficiaryDetail)
 			throws BeneficiaryDetailException;
 
-	BeneficiaryDetail deleteBeneficiary(String uniqueId, String benficiaryMobileNo)
+	BeneficiaryDetail deleteBeneficiary(String uniqueId, String beneficiaryMobileNo)
 			throws BeneficiaryDetailException;
 
 	List<BeneficiaryDetail> viewBeneficiaryByMobileNo(String beneficiaryMobileNo)

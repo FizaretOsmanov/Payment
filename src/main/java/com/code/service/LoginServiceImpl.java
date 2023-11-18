@@ -8,6 +8,7 @@ import com.code.repository.CustomerDAO;
 import com.code.repository.LogInDAO;
 import com.code.repository.SessionDAO;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -28,7 +29,7 @@ public class LoginServiceImpl implements LoginService{
 	
 
 	@Override
-	public String logInAccount(LogIn loginData) throws LoginException {
+	public String logInAccount(@NotNull LogIn loginData) throws LoginException {
 		Optional<Customer> options = signUpDAO.findByMobileNo(loginData.getMobileNo());
 		
 		if(options.isEmpty()) {
@@ -44,7 +45,7 @@ public class LoginServiceImpl implements LoginService{
 		Optional<CurrentSessionUser> currentSessionUser = SessionDAO.findByUserId(newSignUpId);
 		
 		if(currentSessionUser.isPresent()) {
-			throw new LoginException("User already login with this userId");
+			throw new LoginException("User already login with this user id");
 		}
 
 		if((newSignUp.getMobileNo().equals(loginData.getMobileNo()))  && newSignUp.getPassword().equals(loginData.getPassword())) {
@@ -54,7 +55,7 @@ public class LoginServiceImpl implements LoginService{
 			SessionDAO.save(currentSessionUser2);
 			return currentSessionUser2.toString();
 		}else {
-			throw new LoginException("Invalid mobile and Password");
+			throw new LoginException("Invalid mobile and password");
 		}
 		
 	}
@@ -65,7 +66,7 @@ public class LoginServiceImpl implements LoginService{
 		Optional<CurrentSessionUser> currentSessionuserOptional = SessionDAO.findByUuid(key);
 		
 		if(currentSessionuserOptional.isEmpty()) {
-			throw new LoginException("User has not logged in with this Userid");
+			throw new LoginException("User has not logged in with this user id");
 		}
 		
 		CurrentSessionUser currentSessionUser =getCurrentLoginUserSession.getCurrentUserSession(key);
@@ -78,6 +79,5 @@ public class LoginServiceImpl implements LoginService{
 		
 		return "Logged Out Successfully....";
 	}
-	
 
 }

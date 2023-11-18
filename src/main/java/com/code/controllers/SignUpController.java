@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class SignUpController {
 
-	private CustomerService signUpService;
+	private final CustomerService signUpService;
 	
 	@PostMapping("/signUp")
 	public ResponseEntity<Customer> createNewSignUpHandler(@RequestBody Customer newSignUp)
 			throws LoginException {
 		Customer newSignedUp =signUpService.createNewSignUp(newSignUp);
-		return new ResponseEntity<Customer>(newSignedUp,HttpStatus.CREATED);
+		return new ResponseEntity<>(newSignedUp, HttpStatus.CREATED);
 
 	}
 	
@@ -28,6 +28,6 @@ public class SignUpController {
 															   @RequestParam String key)
 			throws LoginException{
 		Customer newUpdatedSignUp = signUpService.updateSignUpDetails(signUp,key);
-		return new ResponseEntity<Customer>(newUpdatedSignUp,HttpStatus.ACCEPTED);
+		return new ResponseEntity<>(newUpdatedSignUp, HttpStatus.ACCEPTED);
 	}
 }

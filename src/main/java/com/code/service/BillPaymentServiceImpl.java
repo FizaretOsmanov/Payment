@@ -21,8 +21,6 @@ public class BillPaymentServiceImpl implements BillPaymentService {
 
 	private final CustomerDAO cDao;
 
-	private final BankAccountDao bankAccountDao;
-
 	private final WalletDao walletDao;
 
 	private final TransactionDao transactionDao;

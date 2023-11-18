@@ -23,25 +23,25 @@ public class BeneficiaryDetailController {
 																  @RequestBody BeneficiaryDetail beneficiaryDetail)
 			throws BeneficiaryDetailException {
 		BeneficiaryDetail saved = beneficiaryService.addBeneficiary(uuid,beneficiaryDetail);
-		return new ResponseEntity<BeneficiaryDetail>(saved,HttpStatus.CREATED);
+		return new ResponseEntity<>(saved, HttpStatus.CREATED);
 	}
 	@PatchMapping("/del")
 	public ResponseEntity<BeneficiaryDetail> deleteBeneficiaryDetail(@RequestParam String uuid,
 																	 @RequestParam String beneficiaryMobileNo)
 			throws BeneficiaryDetailException {
 		BeneficiaryDetail deleted = beneficiaryService.deleteBeneficiary(uuid,beneficiaryMobileNo);
-		return new ResponseEntity<BeneficiaryDetail>(deleted,HttpStatus.OK);
+		return new ResponseEntity<>(deleted, HttpStatus.OK);
 	}
 	@GetMapping("/{beneficiaryMobileNo}")
 	public ResponseEntity<List<BeneficiaryDetail>> findBeneficiaryDetailByMobNo(@PathVariable("beneficiaryMobileNo") String MobNo)
 			throws BeneficiaryDetailException {
 		List<BeneficiaryDetail> beneficiaryDetail = beneficiaryService.viewBeneficiaryByMobileNo(MobNo);
-		return new ResponseEntity<List<BeneficiaryDetail>>(beneficiaryDetail,HttpStatus.OK);
+		return new ResponseEntity<>(beneficiaryDetail, HttpStatus.OK);
 	}
 	@GetMapping("/all")
 	public ResponseEntity<List<BeneficiaryDetail>> findBeneficiaryDetailByCustomer(@RequestParam String uuid)
 			throws BeneficiaryDetailException {
 		List<BeneficiaryDetail> list = beneficiaryService.viewAllBeneficiary(uuid);
-		return new ResponseEntity<List<BeneficiaryDetail>>(list,HttpStatus.OK);
+		return new ResponseEntity<>(list, HttpStatus.OK);
 	}
 }

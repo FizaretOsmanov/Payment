@@ -1,11 +1,11 @@
 package com.code.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
+import org.antlr.v4.runtime.misc.NotNull;
+
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 @Getter
 @Setter
@@ -20,6 +20,9 @@ public class BankAccount {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer accountNumber;
 
+	@NotNull
+	@Size(min = 10, max = 10)
+	@Pattern(regexp = "[6-9][0-9]{9}", message = "Mobile number must have 10 digits mobile Number")
 	private String mobileNumber;
 
 	private String ifscCode;

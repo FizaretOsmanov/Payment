@@ -10,9 +10,11 @@ import java.time.LocalDateTime;
 @Setter
 @RequiredArgsConstructor
 public class MyErrorDetails {
-	
+
 	private LocalDateTime timestamp;
+
 	private String message;
+
 	private String details;
 
 
@@ -23,5 +25,5 @@ public class MyErrorDetails {
 		this.details = details;
 	}
 
-	
+
 }

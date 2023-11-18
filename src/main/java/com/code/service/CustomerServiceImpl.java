@@ -18,8 +18,6 @@ public class CustomerServiceImpl implements CustomerService{
 
 	private final CustomerDAO signUpDAO;
 
-	private final WalletDao walletDao;
-
 	private final CurrentUserSessionService getCurrentLoginUserSession;
 
 	@Override

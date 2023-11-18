@@ -23,14 +23,14 @@ public class BillPaymentController {
 																@PathVariable String uniqueId)
 			throws UserNotLogedinException, InsufficientBalanceException {
 		BillPayment addBill =  bService.makeBillPayment(billPayment, uniqueId);
-		return new ResponseEntity<BillPayment> (addBill, HttpStatus.CREATED);
+		return new ResponseEntity<>(addBill, HttpStatus.CREATED);
 	}
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<Set<BillPayment>> viewAllBillPayments(@PathVariable("id") String uniqueId)
 			throws UserNotLogedinException {
 		Set<BillPayment> billPayments = bService.viewBillPayments(uniqueId);
-		return new ResponseEntity<Set<BillPayment>>(billPayments,HttpStatus.ACCEPTED);
+		return new ResponseEntity<>(billPayments, HttpStatus.ACCEPTED);
 	}
 	
 }
