@@ -25,8 +25,6 @@ public class BankAccount {
 	@Pattern(regexp = "[6-9][0-9]{9}", message = "Mobile number must have 10 digits mobile Number")
 	private String mobileNumber;
 
-	private String ifscCode;
-
 	private String bankName;
 
 	private double bankBalance;
@@ -34,3 +32,6 @@ public class BankAccount {
 	private Integer walletId;
 
 }
+
+//we have entity for bank account which includes id, mobile number, bankName, balance and wallet id for to
+// create bank

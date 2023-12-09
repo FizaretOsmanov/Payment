@@ -1,6 +1,8 @@
 package com.code.controllers;
 
 
+import com.code.dto.request.LoginRequest;
+import com.code.dto.response.LoginResponse;
 import com.code.exception.LoginException;
 import com.code.model.LogIn;
 import com.code.service.LoginService;
@@ -17,9 +19,8 @@ public class LoginControllers {
 	private final LoginService loginService;
 
 	@PostMapping("/login")
-	public ResponseEntity<String> loginHandler(@RequestBody LogIn loginData) throws LoginException {
-		String login = loginService.logInAccount(loginData);
-		return new ResponseEntity<>(login, HttpStatus.OK);
+	public ResponseEntity<LoginResponse> loginHandler(@RequestBody LoginRequest loginData) throws LoginException {
+		return ResponseEntity.ok(loginService.logInAccount(loginData));
 	}
 	
 	@PatchMapping("/logout")

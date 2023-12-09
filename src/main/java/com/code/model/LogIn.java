@@ -4,11 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.antlr.v4.runtime.misc.NotNull;
 
 import javax.validation.constraints.Pattern;
@@ -17,6 +13,7 @@ import javax.validation.constraints.Size;
 @Getter
 @Setter
 @Entity
+@Builder
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Data

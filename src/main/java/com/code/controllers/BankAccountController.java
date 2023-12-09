@@ -21,13 +21,12 @@ public class BankAccountController {
 	private final BankAccountService bankService;
 
 	@PostMapping("/{id}")
-	public ResponseEntity<BankAccount> addBankAccountToWallet(@RequestBody BankAccount bankaccount,
-			@PathVariable("id") String uniqueId) throws BankAlreadyAdded, UserNotLogedinException {
-		BankAccount accountAdded = bankService.addBank(bankaccount, uniqueId);
+	public ResponseEntity<BankAccount> addBankAccountToWallet(@RequestBody BankAccount bankaccount, @PathVariable String id)
+			throws BankAlreadyAdded, UserNotLogedinException {
 		return new ResponseEntity<>(bankaccount, HttpStatus.ACCEPTED);
 	}
 
-	@PatchMapping("/{acc}/{id}")
+	@PatchMapping("/{acc}/{id}") //patchMapping as like put mapping
 	public ResponseEntity<BankAccount> deleteBankAccountFromWallet(@PathVariable("acc") Integer accountNumber,
 			@PathVariable("id") String uniqueId) throws BankAccountNotExists, UserNotLogedinException {
 		BankAccount accountDeleted = bankService.removeBank(accountNumber, uniqueId);

@@ -52,9 +52,9 @@ public class WalletServiceImpl implements WalletService {
 		Optional<Customer> customerUser = customerDAO.findByMobileNo(sourceMobileNo);
 		Customer customer = customerUser.get();
 		Wallet wallet = customer.getWallet();
-		
-		
-		Boolean flag=true;
+
+
+		boolean flag = true;
 		List<BeneficiaryDetail> beneficiaryDetails = wallet.getBeneficiaryDetails();
 		
 		if(beneficiaryDetails==null || beneficiaryDetails.isEmpty()) {

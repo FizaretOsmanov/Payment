@@ -21,13 +21,13 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class BanKAccountServiceImpl implements BankAccountService {
 
-	private final BankAccountDao bankDao;
+	private final BankAccountDao bankDao; //there are beans for wiring and calls method
 
 	private final SessionDAO sessionDao;
 
 	private final CustomerDAO cDao;
 
-	@Override
+	@Override //this method for add bank to profile
 	public BankAccount addBank(BankAccount bankAccount, String uniqueId)
 			throws UserNotLogedinException, BankAlreadyAdded {
 
@@ -53,7 +53,7 @@ public class BanKAccountServiceImpl implements BankAccountService {
 
 	}
 
-	@Override
+	@Override //for delete bank with wallet id
 	public BankAccount removeBank(Integer accountNumber, String uniqueId)
 			throws BankAccountNotExists, UserNotLogedinException {
 		Optional<CurrentSessionUser> currentUser = sessionDao.findByUuid(uniqueId);
