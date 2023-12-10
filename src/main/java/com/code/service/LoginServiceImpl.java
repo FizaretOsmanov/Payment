@@ -26,7 +26,7 @@ public class LoginServiceImpl implements LoginService {
 
 	@Override
 	public LoginResponse logInAccount(LoginRequest loginData) {
-		Optional<Customer> customer = customerRepository.findByUserName(loginData.getUsername());
+		Optional<Customer> customer = customerRepository.findByMobileNo(loginData.getMobileNo());
 
 		if (customer.isPresent()) {
 			throw new ApplicationException(Errors.USER_EXISTS);
