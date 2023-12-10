@@ -11,14 +11,14 @@ import javax.validation.constraints.Size;
 @Setter
 @Entity
 @Data
+@Builder
 @RequiredArgsConstructor
 @AllArgsConstructor
-@Table(name = "account")
 public class BankAccount {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Integer accountNumber;
+	private Long bankId;
 
 	@NotNull
 	@Size(min = 10, max = 10)
@@ -27,9 +27,9 @@ public class BankAccount {
 
 	private String bankName;
 
-	private double bankBalance;
+	private Double bankBalance;
 
-	private Integer walletId;
+	private Long walletId;
 
 }
 

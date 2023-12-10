@@ -1,18 +1,19 @@
 package com.code.service;
 
-import com.code.exception.BankAccountNotExists;
-import com.code.exception.BankAlreadyAdded;
-import com.code.exception.NotAnyBankAddedYet;
-import com.code.exception.UserNotLogedinException;
-import com.code.model.BankAccount;
+import com.code.dto.request.bankAccount.BankAccountRequest;
+import com.code.dto.response.bankAccount.BankAccountResponse;
+
+import java.util.List;
 
 public interface BankAccountService {
-	
-	 BankAccount addBank(BankAccount bankAccount,String uniqueId) throws UserNotLogedinException,BankAlreadyAdded;
 
-	 BankAccount removeBank(Integer accountNumber,String uniqueId) throws BankAccountNotExists,UserNotLogedinException;
-	
-	 BankAccount viewBankAccountI(Integer accountNumber,String uniqueId) throws BankAccountNotExists,UserNotLogedinException ;
-	
-	 BankAccount viewAllAccount(String uniqueId) throws UserNotLogedinException,NotAnyBankAddedYet, BankAccountNotExists;
+	BankAccountResponse addBank(BankAccountRequest accountRequest);
+
+	List<BankAccountResponse> findAll();
+
+	BankAccountResponse findById(Long bankId);
+
+	BankAccountResponse update(Long bankId, BankAccountRequest accountRequest);
+
+	BankAccountResponse delete(Long bankId);
 }

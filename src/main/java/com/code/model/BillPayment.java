@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @Setter
 @Entity
 @Data
+@Builder
 @RequiredArgsConstructor
 @AllArgsConstructor
 public class BillPayment {
@@ -19,7 +20,7 @@ public class BillPayment {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Integer billId;
+	private Long billId;
 
 	private BillType billtype;
 
@@ -29,6 +30,6 @@ public class BillPayment {
 
 	private LocalDateTime time;
 
-	private Integer walletId;
+	private Long walletId;
 
 }

@@ -1,10 +1,9 @@
 package com.code.controllers;
 
-import com.code.exception.BeneficiaryDetailException;
-import com.code.model.BeneficiaryDetail;
+import com.code.dto.request.beneficiary.BeneficiaryRequest;
+import com.code.dto.response.beneficiary.BeneficiaryResponse;
 import com.code.service.BeneficiaryDetailServices;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,35 +12,29 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/ben")
+@RequestMapping("/beneficiaries")
 public class BeneficiaryDetailController {
 
 	private final BeneficiaryDetailServices beneficiaryService;
-	
-	@PostMapping("/{id}")
-	public ResponseEntity<BeneficiaryDetail> addBeneficiaryDetail(@PathVariable("id") String uuid,
-																  @RequestBody BeneficiaryDetail beneficiaryDetail)
-			throws BeneficiaryDetailException {
-		BeneficiaryDetail saved = beneficiaryService.addBeneficiary(uuid,beneficiaryDetail);
-		return new ResponseEntity<>(saved, HttpStatus.CREATED);
+
+	@PostMapping("/post")
+	public ResponseEntity<BeneficiaryResponse> addBeneficiaryDetail(@RequestBody BeneficiaryRequest beneficiaryRequest) {
+		return ResponseEntity.ok(beneficiaryService.addBeneficiary(beneficiaryRequest));
 	}
-	@PatchMapping("/del")
-	public ResponseEntity<BeneficiaryDetail> deleteBeneficiaryDetail(@RequestParam String uuid,
-																	 @RequestParam String beneficiaryMobileNo)
-			throws BeneficiaryDetailException {
-		BeneficiaryDetail deleted = beneficiaryService.deleteBeneficiary(uuid,beneficiaryMobileNo);
-		return new ResponseEntity<>(deleted, HttpStatus.OK);
+
+	@PatchMapping("/{beneficiaryId})")
+	public ResponseEntity<BeneficiaryResponse> deleteBeneficiaryDetail(@PathVariable Long beneficiaryId) {
+		return ResponseEntity.ok(beneficiaryService.deleteBeneficiary(beneficiaryId));
 	}
 	@GetMapping("/{beneficiaryMobileNo}")
-	public ResponseEntity<List<BeneficiaryDetail>> findBeneficiaryDetailByMobNo(@PathVariable("beneficiaryMobileNo") String MobNo)
-			throws BeneficiaryDetailException {
-		List<BeneficiaryDetail> beneficiaryDetail = beneficiaryService.viewBeneficiaryByMobileNo(MobNo);
-		return new ResponseEntity<>(beneficiaryDetail, HttpStatus.OK);
+	public ResponseEntity<List<BeneficiaryResponse>> findBeneficiaryDetailByMobNo(@PathVariable("beneficiaryMobileNo")
+																				  String MobNo) {
+		return ResponseEntity.ok(beneficiaryService.viewBeneficiaryByMobileNo(MobNo));
 	}
+
 	@GetMapping("/all")
-	public ResponseEntity<List<BeneficiaryDetail>> findBeneficiaryDetailByCustomer(@RequestParam String uuid)
-			throws BeneficiaryDetailException {
-		List<BeneficiaryDetail> list = beneficiaryService.viewAllBeneficiary(uuid);
-		return new ResponseEntity<>(list, HttpStatus.OK);
+	public ResponseEntity<List<BeneficiaryResponse>> findAll() {
+		return ResponseEntity.ok(beneficiaryService.findAll());
 	}
+
 }

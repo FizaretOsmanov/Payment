@@ -12,20 +12,22 @@ import javax.validation.constraints.Size;
 @Setter
 @Entity
 @Data
+@Builder
 @AllArgsConstructor
 @RequiredArgsConstructor
-@Table(name = "customer")
 public class Customer {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Integer userId;
+	private Long userId;
 
 	private String userName;
 
 	@NotNull
 	@Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}$", message = "Invalid email format")
 	private String email;
+
+	private Double balance;
 
 	@NotNull
 	@Size(min = 10, max = 10)

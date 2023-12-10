@@ -1,36 +1,29 @@
 package com.code.controllers;
 
-import com.code.exception.InsufficientBalanceException;
-import com.code.exception.UserNotLogedinException;
-import com.code.model.BillPayment;
+import com.code.dto.request.billPayment.BillPaymentRequest;
+import com.code.dto.response.billPayment.BillPaymentResponse;
 import com.code.service.BillPaymentService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Set;
 @CrossOrigin(origins = "*")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/billPayment")
 public class BillPaymentController {
 
-	private final BillPaymentService bService;
-	
-	@PostMapping("/{uniqueId}")
-	public ResponseEntity<BillPayment> addNewBillPaymentDetails(@RequestBody BillPayment billPayment,
-																@PathVariable String uniqueId)
-			throws UserNotLogedinException, InsufficientBalanceException {
-		BillPayment addBill =  bService.makeBillPayment(billPayment, uniqueId);
-		return new ResponseEntity<>(addBill, HttpStatus.CREATED);
+	private final BillPaymentService billPaymentService;
+
+	@PostMapping("/{customerId}/post")
+	public ResponseEntity<BillPaymentResponse> addNewBillPaymentDetails(@PathVariable Long customerId,
+																		@RequestBody BillPaymentRequest billPayment) {
+		return ResponseEntity.ok(billPaymentService.makeBillPayment(customerId, billPayment));
 	}
-	
-	@GetMapping("/{id}")
-	public ResponseEntity<Set<BillPayment>> viewAllBillPayments(@PathVariable("id") String uniqueId)
-			throws UserNotLogedinException {
-		Set<BillPayment> billPayments = bService.viewBillPayments(uniqueId);
-		return new ResponseEntity<>(billPayments, HttpStatus.ACCEPTED);
+
+	@GetMapping("/{billId}")
+	public ResponseEntity<BillPaymentResponse> viewAllBillPayments(@PathVariable Long billId,
+																   @RequestBody BillPaymentRequest paymentRequest) {
+		return ResponseEntity.ok(billPaymentService.viewBillPayments(billId, paymentRequest));
 	}
 	
 }

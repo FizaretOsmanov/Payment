@@ -5,11 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.antlr.v4.runtime.misc.NotNull;
 
 import javax.validation.constraints.Pattern;
@@ -19,6 +15,7 @@ import javax.validation.constraints.Size;
 @Data
 @Getter
 @Setter
+@Builder
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Table(name = "beneficiary")
@@ -26,7 +23,7 @@ public class BeneficiaryDetail {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Integer beneficiaryId;
+	private Long beneficiaryId;
 
 	@Getter
 	private String beneficiaryName;
@@ -38,6 +35,6 @@ public class BeneficiaryDetail {
 	private String beneficiaryMobileNo;
 	
 	@Getter
-	private Integer walletId;
+	private Long walletId;
 
 }

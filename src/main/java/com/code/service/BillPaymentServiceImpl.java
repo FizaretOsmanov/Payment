@@ -1,82 +1,75 @@
 package com.code.service;
 
-import com.code.exception.InsufficientBalanceException;
-import com.code.exception.UserNotLogedinException;
-import com.code.model.*;
-import com.code.repository.*;
+import com.code.dto.request.billPayment.BillPaymentRequest;
+import com.code.dto.response.billPayment.BillPaymentResponse;
+import com.code.errors.ApplicationException;
+import com.code.errors.Errors;
+import com.code.model.BillPayment;
+import com.code.model.Customer;
+import com.code.model.Transaction;
+import com.code.model.Wallet;
+import com.code.repository.BillPaymentRepository;
+import com.code.repository.CustomerRepository;
+import com.code.repository.TransactionRepository;
+import com.code.repository.WalletRepository;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 public class BillPaymentServiceImpl implements BillPaymentService {
 
-	private final BillPaymentDao billDao;
+	private final BillPaymentRepository billPaymentRepository;
 
-	private final SessionDAO sessionDao;
+	private final CustomerRepository customerRepository;
 
-	private final CustomerDAO cDao;
+	private final WalletRepository walletRepository;
 
-	private final WalletDao walletDao;
+	private final TransactionRepository transactionRepository;
 
-	private final TransactionDao transactionDao;
+	private final ModelMapper modelMapper;
 
 	@Override
-	public BillPayment makeBillPayment(BillPayment billpayment, String uniqueId)
-			throws InsufficientBalanceException, UserNotLogedinException {
-		Optional<CurrentSessionUser> currentUser = sessionDao.findByUuid(uniqueId);
+	public BillPaymentResponse makeBillPayment(Long customerId, BillPaymentRequest billPayment) {
 
-		if (!currentUser.isPresent()) {
-			throw new UserNotLogedinException("Please Login first");
+		Optional<Customer> customer = customerRepository.findById(customerId);
+		if (customer.isEmpty()) {
+			throw new ApplicationException(Errors.USER_NOT_FOUND);
 		}
-
-		Optional<Customer> customer = cDao.findById(currentUser.get().getUserId());
 		Wallet wallet = customer.get().getWallet();
 
-		if (wallet.getBalance() < billpayment.getAmount()) {
-			throw new InsufficientBalanceException("Insufficient balance in wallet, Add money to your wallet");
+		if (wallet.getBalance() < billPayment.getAmount()) {
+			throw new RuntimeException("Insufficient balance in wallet, Add money to your wallet");
 		}
 
-		wallet.setBalance(wallet.getBalance() - billpayment.getAmount());
-		walletDao.save(wallet);
+		wallet.setBalance(wallet.getBalance() - billPayment.getAmount());
+		walletRepository.save(wallet);
 
-		billpayment.setWalletId(wallet.getWalletId());
-		billpayment.setTime(LocalDateTime.now());
+		billPayment.setWalletId(wallet.getWalletId());
+		billPayment.setTime(LocalDateTime.now());
 
-		BillPayment completedPayment = billDao.save(billpayment);
-
-		if (completedPayment != null) {
-			Transaction transaction = new Transaction();
-			transaction.setDescription(billpayment.getBilltype() + " successful");
-			transaction.setAmount(billpayment.getAmount());
-			transaction.setTransactionDate(LocalDateTime.now());
-			transaction.setTransactionType(billpayment.getTransactionType());
-			transaction.setWalletId(wallet.getWalletId());
-			wallet.getTransaction().add(transaction);
-			transactionDao.save(transaction);
-		}
-		System.out.println(billpayment);
-		return completedPayment;
+		Transaction transaction = Transaction.builder()
+				.description(billPayment.getBilltype() + "successfull")
+				.amount(billPayment.getAmount())
+				.transactionDate(billPayment.getTime())
+				.transactionType(billPayment.getTransactionType())
+				.walletId(wallet.getWalletId())
+				.build();
+		transactionRepository.save(transaction);
+		System.out.println(billPayment);
+		return modelMapper.map(billPayment, BillPaymentResponse.class);
 	}
 
 	@Override
-	public Set<BillPayment> viewBillPayments(String uniqueId) throws UserNotLogedinException {
+	public BillPaymentResponse viewBillPayments(Long billId, BillPaymentRequest paymentRequest) {
 
-		Optional<CurrentSessionUser> currentUser = sessionDao.findByUuid(uniqueId);
-
-		if (!currentUser.isPresent()) {
-			throw new UserNotLogedinException("Please Login first");
-		}
-
-		Optional<Customer> customer = cDao.findById(currentUser.get().getUserId());
-		Wallet wallet = customer.get().getWallet();
-
-		Set<BillPayment> billPayments = billDao.findByWalletId(wallet.getWalletId());
-		return billPayments;
+		BillPayment billPayment = billPaymentRepository.findById(billId)
+				.orElseThrow(() -> new ApplicationException(Errors.BILL_NOT_FOUND));
+		return modelMapper.map(billPayment, BillPaymentResponse.class);
 	}
 
 }

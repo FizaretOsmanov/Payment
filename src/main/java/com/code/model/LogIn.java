@@ -21,7 +21,7 @@ public class LogIn {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Integer userId;
+	private Long userId;
 
 	@NotNull
 	@Size(min = 10, max = 10)

@@ -1,11 +1,12 @@
 package com.code.service;
 
-import com.code.exception.LoginException;
+import com.code.dto.request.customer.CustomerRequest;
+import com.code.dto.response.customer.CustomerResponse;
 import com.code.model.Customer;
 
 public interface CustomerService {
 
-	Customer createNewSignUp(Customer signUp) throws LoginException;
+	CustomerResponse createNewSignUp(CustomerRequest signUp);
 
-	Customer updateSignUpDetails(Customer signUp, String key) throws LoginException;
+	CustomerResponse updateSignUpDetails(Long customerId,CustomerRequest signUp);
 }

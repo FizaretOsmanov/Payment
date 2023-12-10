@@ -1,73 +1,59 @@
 package com.code.controllers;
 
-import com.code.exception.BeneficiaryDetailException;
-import com.code.exception.CustomerNotException;
-import com.code.exception.InsufficientBalanceException;
-import com.code.exception.LoginException;
-import com.code.model.BeneficiaryDetail;
+import com.code.dto.request.wallet.WalletRequest;
+import com.code.dto.response.transaction.TransactionResponse;
+import com.code.dto.response.wallet.WalletResponse;
 import com.code.model.Customer;
-import com.code.model.Transaction;
-import com.code.service.WalletServiceImpl;
+import com.code.model.Wallet;
+import com.code.service.WalletService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "*")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/wallet")
 public class WalletController {
 
-	private final WalletServiceImpl walletServiceImpl;
+	private final WalletService walletService;
 
-	
-	@GetMapping("/{id}")
-	public ResponseEntity<String> viewWalletBalance(@PathVariable("id") String uniqueId)
-			throws CustomerNotException, LoginException {
-		Double balance = walletServiceImpl.showBalance(uniqueId);
-		return new ResponseEntity<>(("Wallet balance is : " + balance), HttpStatus.CREATED);
+
+	@PostMapping("/save")
+	public ResponseEntity<WalletResponse> save(@RequestBody WalletRequest walletRequest){
+		return ResponseEntity.ok(walletService.create(walletRequest));
 	}
 
 
-	@PutMapping("/function/{sourceMobileNo}/{targetMobileNo}/{amount}/{uniqueId}")
-	public ResponseEntity<Transaction> WalletTOWalletTransfer(@PathVariable("sourceMobileNo") String sourceMobileNo,
-															  @PathVariable("targetMobileNo") String targetMobileNo,
-															  @PathVariable("amount") Double amount,
-															  @PathVariable("uniqueId") String uniqueId)
-			throws CustomerNotException, LoginException, BeneficiaryDetailException, InsufficientBalanceException {
-		Transaction transaction = walletServiceImpl.fundTransfer(sourceMobileNo, targetMobileNo, amount, uniqueId);
-		return new ResponseEntity<>(transaction, HttpStatus.OK);
-	}
 
-	@PutMapping("/deposit/{id}/{amount}")
-	public ResponseEntity<Transaction> depositAmountFromWalletToBank(@PathVariable("id") String uniqueId,
-																	 @PathVariable("amount") Double amount)
-			throws CustomerNotException, LoginException, InsufficientBalanceException {
-		Transaction transaction = walletServiceImpl.depositAmount(uniqueId, amount);
-		return new ResponseEntity<>(transaction, HttpStatus.OK);
+	@GetMapping("/{walletId}")
+	public ResponseEntity<Double> viewWalletBalance(@PathVariable Long walletId) {
+		return ResponseEntity.ok(walletService.showBalance(walletId));
 	}
 
 
-	@GetMapping("/getbenList/{unique}")
-	public ResponseEntity<List<BeneficiaryDetail>> getAllBeneficiaryCustomerFromWallet(String uniqueId,
-																					   @PathVariable String unique)
-			throws CustomerNotException, LoginException, BeneficiaryDetailException {
-		List<BeneficiaryDetail> beneficiaryDetails = walletServiceImpl.getList(uniqueId);
-		return new ResponseEntity<>(beneficiaryDetails, HttpStatus.OK);
+	@PutMapping("/function/{sourceMobileNo}/{targetMobileNo}/{amount}")
+	public ResponseEntity<TransactionResponse> WalletTOWalletTransfer(@PathVariable("sourceMobileNo") String sourceMobileNo,
+																	  @PathVariable("targetMobileNo") String targetMobileNo,
+																	  @PathVariable("amount") Double amount) {
+		return ResponseEntity.ok(walletService.fundTransfer(sourceMobileNo, targetMobileNo, amount));
 	}
 
-	@PostMapping("/addMoney/{unique}/{amount}")
-	public ResponseEntity<Customer> addMoneyFromBankToWallet(String uniqueId, Double amount) throws Exception {
-		Customer customer = walletServiceImpl.addMoney(uniqueId, amount);
-		return new ResponseEntity<>(customer, HttpStatus.OK);
+	@PutMapping("/deposit/{walletId}/{bankId}/{amount}")
+	public ResponseEntity<TransactionResponse> depositAmountFromWalletToBank(@PathVariable Long walletId,
+																			 @PathVariable Long bankId,
+																			 @PathVariable("amount") Double amount) {
+		return ResponseEntity.ok(walletService.depositAmount(walletId, bankId, amount));
+	}
+
+	@PostMapping("/addMoney/{bankId}/{walletId}/{amount}")
+	public ResponseEntity<TransactionResponse> addMoneyFromBankToWallet(Long bankId, Long walletId,Double amount) {
+		return ResponseEntity.ok(walletService.addMoney(bankId, walletId, amount));
+	}
+
+	@DeleteMapping("/{walletId}")
+	public ResponseEntity<WalletResponse> delete(@PathVariable Long walletId){
+		return ResponseEntity.ok(walletService.delete(walletId));
 	}
 
 }

@@ -1,61 +1,51 @@
 package com.code.service;
 
-import java.util.Optional;
-
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.code.exception.LoginException;
+import com.code.dto.request.customer.CustomerRequest;
+import com.code.dto.response.customer.CustomerResponse;
+import com.code.errors.ApplicationException;
+import com.code.errors.Errors;
 import com.code.model.Customer;
 import com.code.model.Wallet;
-import com.code.repository.CustomerDAO;
-import com.code.repository.WalletDao;
+import com.code.repository.CustomerRepository;
+import com.code.repository.WalletRepository;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class CustomerServiceImpl implements CustomerService{
+public class CustomerServiceImpl implements CustomerService {
 
-	private final CustomerDAO signUpDAO;
+	private final CustomerRepository customerRepository;
 
-	private final CurrentUserSessionService getCurrentLoginUserSession;
+	private final WalletRepository walletRepository;
+
+	private final ModelMapper modelMapper;
 
 	@Override
-	public Customer createNewSignUp(Customer newSignUp) throws LoginException {
+	public CustomerResponse createNewSignUp(CustomerRequest newSignUp) {
 		System.out.println(newSignUp.toString());
-		Optional<Customer> opt = signUpDAO.findByUserName(newSignUp.getUserName());
-		if(opt.isPresent())
-		{
-			throw new LoginException("User Already Exist!");
+			Optional<Customer> customer = customerRepository.findByUserName(newSignUp.getUserName());
+		if (customer.isPresent()) {
+			throw new ApplicationException(Errors.USER_EXISTS);
 		}
-		Wallet wallet = new Wallet();
 
-		wallet.setBalance(0.0);
-		wallet.setCustomer(newSignUp);
-		newSignUp.setWallet(wallet);
-		
-		return signUpDAO.save(newSignUp);
+		return modelMapper.map(newSignUp, CustomerResponse.class);
 	}
 
 	@Override
-	public Customer updateSignUpDetails(Customer signUp, String key) throws LoginException {
-		Customer signUpDetails = getCurrentLoginUserSession.getSignUpDetails(key);
-		
-		if(signUpDetails == null)
-		{
-			throw new LoginException("UnAuthorized!!! No User Found....Try To login first!");
-		}
-		
-		if(signUpDetails.getUserId().equals(signUp.getUserId()))
-			{
-			signUpDAO.save(signUp);
-			return signUp;
-			}
-		else
-			throw new LoginException("Can't change UserId!!");
+	public CustomerResponse updateSignUpDetails(Long customerId, CustomerRequest signUp) {
+		customerRepository.findById(customerId)
+				.orElseThrow(()-> new ApplicationException(Errors.USER_NOT_FOUND));
+
+		Customer customerForUpdate = modelMapper.map(signUp, Customer.class);
+		customerForUpdate.setPassword(signUp.getPassword());
+		customerForUpdate.setUserName(signUp.getUserName());
+		customerForUpdate.setUserId(customerId);
+
+		Customer savedCustomer = customerRepository.save(customerForUpdate);
+		return modelMapper.map(savedCustomer, CustomerResponse.class);
 	}
-
-	
-	
-
 }

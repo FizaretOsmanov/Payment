@@ -1,13 +1,10 @@
 package com.code.service;
 
-import com.code.dto.request.LoginRequest;
-import com.code.dto.response.LoginResponse;
-import com.code.exception.LoginException;
-import com.code.model.LogIn;
+import com.code.dto.request.login.LoginRequest;
+import com.code.dto.response.login.LoginResponse;
 
 public interface LoginService {
 
-	LoginResponse logInAccount(LoginRequest loginData) throws LoginException;
+	LoginResponse logInAccount(LoginRequest loginData);
 
-	String logOutFromAccount(String key) throws LoginException;
 }

@@ -12,14 +12,14 @@ import java.time.LocalDateTime;
 @Setter
 @Entity
 @Data
+@Builder
 @AllArgsConstructor
 @RequiredArgsConstructor
-@Table(name = "transaction")
 public class Transaction {
 
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer transactionId;
+    private Long transactionId;
     
     private TransactionType transactionType;
     
@@ -28,11 +28,11 @@ public class Transaction {
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime transactionDate;
     
-    private double amount;
+    private Double amount;
     
 	private String description;
     
-    private Integer  walletId;
+    private Long  walletId;
 
     @Override
 	public String toString() {
@@ -40,6 +40,4 @@ public class Transaction {
 				+ ", transactionDate=" + transactionDate + ", amount=" + amount + ", description=" + description
 				+ ", walletId=" + walletId + "]";
 	}
-
-
 }

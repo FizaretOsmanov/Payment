@@ -1,116 +1,85 @@
 package com.code.service;
 
-import com.code.exception.BankAccountNotExists;
-import com.code.exception.BankAlreadyAdded;
-import com.code.exception.NotAnyBankAddedYet;
-import com.code.exception.UserNotLogedinException;
+import com.code.dto.request.bankAccount.BankAccountRequest;
+import com.code.dto.response.bankAccount.BankAccountResponse;
+import com.code.errors.ApplicationException;
+import com.code.errors.Errors;
 import com.code.model.BankAccount;
-import com.code.model.CurrentSessionUser;
-import com.code.model.Customer;
-import com.code.model.Wallet;
-import com.code.repository.BankAccountDao;
-import com.code.repository.CustomerDAO;
-import com.code.repository.LogInDAO;
-import com.code.repository.SessionDAO;
+import com.code.repository.BankAccountRepository;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class BanKAccountServiceImpl implements BankAccountService {
 
-	private final BankAccountDao bankDao; //there are beans for wiring and calls method
+	private final BankAccountRepository accountRepository; //there are beans for wiring and calls method
 
-	private final SessionDAO sessionDao;
+	private final ModelMapper modelMapper;
 
-	private final CustomerDAO cDao;
+	@Override
+	public BankAccountResponse addBank(BankAccountRequest accountRequest) {
+		Optional<BankAccount> bankAccount = accountRepository.findByBankName(accountRequest.getBankName());
 
-	@Override //this method for add bank to profile
-	public BankAccount addBank(BankAccount bankAccount, String uniqueId)
-			throws UserNotLogedinException, BankAlreadyAdded {
-
-		Optional<CurrentSessionUser> currentUser = sessionDao.findByUuid(uniqueId);
-
-		if (!currentUser.isPresent()) {
-			throw new UserNotLogedinException("Please Login first");
+		if (bankAccount.isEmpty()) {
+			throw new ApplicationException(Errors.BANK_NOT_FOUND);
 		}
 
-		Optional<Customer> customer = cDao.findById(currentUser.get().getUserId());
-		Wallet wallet = customer.get().getWallet();
+		BankAccount bankForSave = BankAccount.builder()
+				.walletId(accountRequest.getWalletId())
+				.bankBalance(accountRequest.getBankBalance())
+				.bankName(accountRequest.getBankName())
+				.mobileNumber(accountRequest.getMobileNumber())
+				.build();
 
-		Optional<BankAccount> bankAc = bankDao.findById(bankAccount.getAccountNumber());
-
-		if (bankAc.isPresent()) {
-			throw new BankAlreadyAdded(
-					"Bank with " + bankAccount.getAccountNumber() + " This Account Number Already Exist");
-		}
-
-		System.out.println(wallet.getWalletId());
-		bankAccount.setWalletId(wallet.getWalletId());
-		return bankDao.save(bankAccount);
-
-	}
-
-	@Override //for delete bank with wallet id
-	public BankAccount removeBank(Integer accountNumber, String uniqueId)
-			throws BankAccountNotExists, UserNotLogedinException {
-		Optional<CurrentSessionUser> currentUser = sessionDao.findByUuid(uniqueId);
-
-		if (!currentUser.isPresent()) {
-			throw new UserNotLogedinException("Please Login first");
-		}
-
-		Optional<BankAccount> bankAccount = bankDao.findById(accountNumber);
-
-		bankDao.delete(bankAccount.get());
-
-		return bankAccount.get();
+		BankAccount savedBank = accountRepository.save(bankForSave);
+		return modelMapper.map(savedBank, BankAccountResponse.class);
 
 	}
 
 	@Override
-	public BankAccount viewBankAccountI(Integer accountNumber, String uniqueId)
-			throws BankAccountNotExists, UserNotLogedinException {
-
-		Optional<CurrentSessionUser> currentUser = sessionDao.findByUuid(uniqueId);
-
-		if (!currentUser.isPresent()) {
-			throw new UserNotLogedinException("Please Login first");
-		}
-
-		Optional<BankAccount> bankAccount = bankDao.findById(accountNumber);
-
-		if (bankAccount.isPresent()) {
-			return bankAccount.get();
-		} else {
-			throw new BankAccountNotExists(
-					"Bank account is not existed with current account Number :" + accountNumber);
-		}
-
+	public List<BankAccountResponse> findAll() {
+		return accountRepository
+				.findAll()
+				.stream()
+				.map(bankAccount -> modelMapper.map(bankAccount, BankAccountResponse.class))
+				.collect(Collectors.toList());
 	}
 
 	@Override
-	public BankAccount viewAllAccount(String uniqueId)
-			throws UserNotLogedinException, NotAnyBankAddedYet, BankAccountNotExists {
-		Optional<CurrentSessionUser> currentUser = sessionDao.findByUuid(uniqueId);
-
-		if (!currentUser.isPresent()) {
-			throw new UserNotLogedinException("Please Login first");
-		}
-
-		Optional<Customer> customer = cDao.findById(currentUser.get().getUserId());
-		Wallet wallet = customer.get().getWallet();
-
-		BankAccount bankAccounts = bankDao.findByWalletId(wallet.getWalletId());
-
-		if (bankAccounts != null) {
-			return bankAccounts;
-		} else {
-			throw new BankAccountNotExists("Bank account is not existed in current user ");
-		}
-
+	public BankAccountResponse findById(Long bankId) {
+		BankAccount bankAccount = accountRepository.findById(bankId).orElseThrow(
+				() -> new ApplicationException(Errors.BANK_NOT_FOUND));
+		return modelMapper.map(bankAccount, BankAccountResponse.class);
 	}
 
+	@Override
+	public BankAccountResponse update(Long bankId, BankAccountRequest accountRequest) {
+		BankAccount bankAccount = accountRepository.findById(bankId).orElseThrow(
+				() -> new ApplicationException(Errors.BANK_NOT_FOUND));
+
+		BankAccount bankForUpdate = BankAccount.builder()
+				.bankId(bankAccount.getBankId())
+				.walletId(bankAccount.getWalletId())
+				.bankBalance(bankAccount.getBankBalance())
+				.bankName(bankAccount.getBankName())
+				.build();
+
+		BankAccount savedBank = accountRepository.save(bankForUpdate);
+		return modelMapper.map(savedBank, BankAccountResponse.class);
+	}
+
+	@Override
+	public BankAccountResponse delete(Long bankId) {
+		BankAccount bankAccount = accountRepository.findById(bankId).orElseThrow(
+				() -> new ApplicationException(Errors.BANK_NOT_FOUND));
+
+		accountRepository.delete(bankAccount);
+		return modelMapper.map(bankAccount, BankAccountResponse.class);
+	}
 }

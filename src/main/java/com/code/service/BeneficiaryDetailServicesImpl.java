@@ -1,130 +1,72 @@
 package com.code.service;
 
-import com.code.exception.BeneficiaryDetailException;
+import com.code.dto.request.beneficiary.BeneficiaryRequest;
+import com.code.dto.response.beneficiary.BeneficiaryResponse;
+import com.code.errors.ApplicationException;
+import com.code.errors.Errors;
 import com.code.model.BeneficiaryDetail;
-import com.code.model.CurrentSessionUser;
-import com.code.model.Customer;
-import com.code.model.Wallet;
-import com.code.repository.BeneficiaryDetailDao;
-import com.code.repository.CustomerDAO;
-import com.code.repository.SessionDAO;
-import com.code.repository.WalletDao;
+import com.code.repository.BeneficiaryDetailRepository;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class BeneficiaryDetailServicesImpl implements BeneficiaryDetailServices {
 
-	private final BeneficiaryDetailDao bDao;
+	private final BeneficiaryDetailRepository beneficiaryDetailRepository;
 
-	private final SessionDAO sDao;
-
-	private final CustomerDAO customerDao;
+	private final ModelMapper modelMapper;
 	
 
 	@Override
-	public BeneficiaryDetail addBeneficiary(String uniqueId,BeneficiaryDetail beneficiaryDetail)
-			throws BeneficiaryDetailException {
-		Optional<CurrentSessionUser> currentSessionUser= sDao.findByUuid(uniqueId);
-		if(currentSessionUser.isPresent()) {
-			Optional<Customer> userOptional=customerDao.findById(currentSessionUser.get().getUserId());
-			if(userOptional.isPresent()) {
-				Wallet wallet = userOptional.get().getWallet();
-				beneficiaryDetail.setWalletId(wallet.getWalletId());
-				List<BeneficiaryDetail> list = wallet.getBeneficiaryDetails();
-				list.add(beneficiaryDetail);
-				BeneficiaryDetail saved =bDao.save(beneficiaryDetail);
-				return saved;
-			}else {
-				throw new BeneficiaryDetailException("No Customer found with id "+currentSessionUser.get().getUserId());
-			}
+	public BeneficiaryResponse addBeneficiary(BeneficiaryRequest beneficiaryRequest) {
+		Optional<BeneficiaryDetail> beneficiaryDetail = beneficiaryDetailRepository
+				.findByBeneficiaryName(beneficiaryRequest.getBeneficiaryName());
+		if (beneficiaryDetail.isEmpty()) {
+			throw new ApplicationException(Errors.BENEFICIARY_NOT_FOUND);
 		}
-		
-		else {
-			throw new BeneficiaryDetailException("You need to login first!");
-		}
+
+		BeneficiaryDetail beneficiaryForSave = BeneficiaryDetail.builder()
+				.beneficiaryName(beneficiaryRequest.getBeneficiaryName())
+				.beneficiaryMobileNo(beneficiaryRequest.getBeneficiaryMobileNo())
+				.build();
+		BeneficiaryDetail savedBeneficiary = beneficiaryDetailRepository.save(beneficiaryForSave);
+		return modelMapper.map(savedBeneficiary, BeneficiaryResponse.class);
+
 	}
 
 	@Override
-	public BeneficiaryDetail deleteBeneficiary(String uniqueId,String beneficiaryMobile)
-			throws BeneficiaryDetailException {
-		Optional<CurrentSessionUser> currentSessionUser= sDao.findByUuid(uniqueId);
-		if(currentSessionUser.isPresent()) {
-			Optional<Customer> userOptional=customerDao.findById(currentSessionUser.get().getUserId());
-			if(userOptional.isPresent()) {
-				Customer customer = userOptional.get();
-				Wallet wallet = customer.getWallet();
-				List<BeneficiaryDetail> list=wallet.getBeneficiaryDetails();
-				if(!list.isEmpty()) {
-					int index=-1;
-					for(int i=0;i<list.size();i++) {
-						if(list.get(i).getBeneficiaryMobileNo().equals(beneficiaryMobile)) {
-							index=i;
-							break;
-						}
-					}
-					if(index==-1) throw new BeneficiaryDetailException("Beneficiary Not found");
-					BeneficiaryDetail beneficiaryDetail=list.get(index);
-					BeneficiaryDetail updated=list.remove(index);
-					wallet.setBeneficiaryDetails(list);
-					bDao.delete(updated);
-					return beneficiaryDetail;
-					
-				}else {
-					throw new BeneficiaryDetailException("There is no beneficiary found in the list");
-				}
-				
-			}else {
-				throw new BeneficiaryDetailException("No Customer found with id "+currentSessionUser.get().getUserId());
-			}
-		}
-		
-		else {
-			throw new BeneficiaryDetailException("You need to login first!");
-		}
-		
+	public BeneficiaryResponse deleteBeneficiary(Long beneficiaryId) {
+		BeneficiaryDetail beneficiaryDetail = beneficiaryDetailRepository.findById(beneficiaryId).orElseThrow(() ->
+				new ApplicationException(Errors.BENEFICIARY_NOT_FOUND));
+		beneficiaryDetailRepository.delete(beneficiaryDetail);
+		return modelMapper.map(beneficiaryDetail, BeneficiaryResponse.class);
 	}
 
 	@Override
-	public List<BeneficiaryDetail> viewBeneficiaryByMobileNo(String beneficiaryMobileNo)
-			throws BeneficiaryDetailException {
-		List<BeneficiaryDetail> beneficiaryDetail=bDao.findByBeneficiaryMobileNo(beneficiaryMobileNo);
+	public List<BeneficiaryResponse> viewBeneficiaryByMobileNo(String beneficiaryMobileNo) {
+		List<BeneficiaryResponse> beneficiaryDetail = beneficiaryDetailRepository
+				.findByBeneficiaryMobileNo(beneficiaryMobileNo);
 		if(beneficiaryDetail.isEmpty()) {
-			throw new BeneficiaryDetailException("No Beneficiary found with Mobile No : "+beneficiaryMobileNo);
+			throw new RuntimeException("No Beneficiary found with Mobile No : " + beneficiaryMobileNo);
 		}else {
 			return beneficiaryDetail;
 		}
 	}
 
 	@Override
-	public List<BeneficiaryDetail> viewAllBeneficiary(String uniqueId) throws BeneficiaryDetailException {
-		Optional<CurrentSessionUser> currentSessionUser= sDao.findByUuid(uniqueId);
-		if(currentSessionUser.isPresent()) {
-			CurrentSessionUser currUser =  currentSessionUser.get();
-			int userid=currUser.getUserId();
-			Optional<Customer> customerOpt = customerDao.findById(userid);
-			if(customerOpt.isPresent()) {
-				Customer customer = customerOpt.get();
-				List<BeneficiaryDetail>list =customer.getWallet().getBeneficiaryDetails();
-				if(list.isEmpty()) {
-					throw new BeneficiaryDetailException("No Beneficiary found in the list");
-				}else {
-					return list;
-				}
-			}else {
-				throw new BeneficiaryDetailException("You need to login first");
-			}
-			
-		}
-		else {
-			throw new BeneficiaryDetailException("You need to login first");	
-		}
+	public List<BeneficiaryResponse> findAll() {
+		return beneficiaryDetailRepository
+				.findAll()
+				.stream()
+				.map(beneficiaryDetail -> modelMapper.map(beneficiaryDetail, BeneficiaryResponse.class))
+				.collect(Collectors.toList());
 	}
-
 
 
 }

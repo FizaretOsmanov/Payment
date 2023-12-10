@@ -15,15 +15,17 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@Builder
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Data
-@Table(name = "wallet")
 public class Wallet {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
+
+	private String walletName;
 
 	private Double balance;
 
@@ -42,7 +44,7 @@ public class Wallet {
 	@JsonIgnore
 	private List<BeneficiaryDetail> beneficiaryDetails;
 
-	public Integer getWalletId() {
+	public Long getWalletId() {
         return null;
     }
 }

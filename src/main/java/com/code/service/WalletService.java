@@ -1,29 +1,26 @@
 package com.code.service;
 
-import com.code.exception.BeneficiaryDetailException;
-import com.code.exception.CustomerNotException;
-import com.code.exception.InsufficientBalanceException;
-import com.code.exception.LoginException;
+import com.code.dto.request.wallet.WalletRequest;
+import com.code.dto.response.beneficiary.BeneficiaryResponse;
+import com.code.dto.response.transaction.TransactionResponse;
+import com.code.dto.response.wallet.WalletResponse;
 import com.code.model.BeneficiaryDetail;
 import com.code.model.Customer;
 import com.code.model.Transaction;
 
-import javax.naming.InsufficientResourcesException;
 import java.util.List;
 
 public interface WalletService {
 
-	Double showBalance(String mobileNo) throws CustomerNotException, LoginException;
+	Double showBalance(Long walletId);
 
-	Transaction fundTransfer(String sourceMobileNo, String targetMobileNo, Double amount, String uniqueId)
-			throws CustomerNotException, BeneficiaryDetailException, LoginException, InsufficientBalanceException;
+	TransactionResponse fundTransfer(String sourceMobileNo, String targetMobileNo, Double amount);
 
-	Transaction depositAmount(String uniqueId, Double amount)
-			throws CustomerNotException, LoginException, InsufficientResourcesException, InsufficientBalanceException;
-
-	List<BeneficiaryDetail> getList(String uniqueId)
-			throws CustomerNotException, LoginException, BeneficiaryDetailException;
-
-	Customer addMoney(String uniqueId, Double amount) throws Exception;
+	TransactionResponse depositAmount(Long walletId,Long bankId,Double amount);
 	
+	TransactionResponse addMoney(Long bankId, Long walletId,Double amount);
+
+	WalletResponse delete(Long walletId);
+
+    WalletResponse create(WalletRequest walletRequest);
 }

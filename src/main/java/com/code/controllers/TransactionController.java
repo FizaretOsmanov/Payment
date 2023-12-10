@@ -1,16 +1,13 @@
 package com.code.controllers;
 
-import com.code.exception.TransactionNotFoundException;
-import com.code.exception.UserNotLogedinException;
-import com.code.model.Transaction;
-import com.code.model.TransactionType;
-import com.code.repository.TransactionDao;
-import com.code.service.TransactionServiceImpl;
-import jakarta.websocket.server.PathParam;
+import com.code.dto.response.transaction.TransactionResponse;
+import com.code.service.TransactionService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -22,32 +19,11 @@ import java.util.List;
 public class TransactionController {
 
 
-	private final TransactionServiceImpl transactionserviceimpl;
+	private final TransactionService transactionService;
 
-	@GetMapping("/transaction_history/{uniqueId}")
-	public ResponseEntity<List<Transaction>> viewAllTransactionHandler( @PathVariable("uniqueId") String uniqueId)
-			throws UserNotLogedinException, TransactionNotFoundException {
-		List<Transaction> allTransaction = transactionserviceimpl.viewAllTransaction(uniqueId);
-		return new ResponseEntity<>(allTransaction, HttpStatus.OK);
-	}
-	
-	
-	@GetMapping("/{from}/{to}/{id}")
-	public ResponseEntity<List<Transaction>> viewTransactionByDateHandler(@PathVariable("from") String from,
-			@PathVariable("to") String to,@PathVariable("id") String uniqueId)
-			throws UserNotLogedinException, TransactionNotFoundException {
-		List<Transaction> historyByDate= transactionserviceimpl.viewTransactionByDate(from,to,uniqueId);
-		return new ResponseEntity<>(historyByDate, HttpStatus.OK);
+	@GetMapping("/transaction_history/{transactionId}")
+	public ResponseEntity<List<TransactionResponse>> findAll() {
+		return ResponseEntity.ok(transactionService.findAll());
 	}
 
-	@GetMapping("/history_by_type/{transaction_type}/{uniqueId}")
-	public ResponseEntity<List<Transaction>> viewAllTransactionByTypeHandler(@PathParam("transactionType")
-																			 TransactionType type,
-																			 @PathVariable String uniqueId)
-			throws UserNotLogedinException, TransactionNotFoundException {
-		List<Transaction> TransactionType = transactionserviceimpl.viewAllTransactionByTransactionType(uniqueId, type);
-		return new ResponseEntity<>(TransactionType, HttpStatus.OK);
-	}
-	
-	
 }

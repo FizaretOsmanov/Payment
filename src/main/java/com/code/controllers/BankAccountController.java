@@ -1,50 +1,49 @@
 package com.code.controllers;
 
-import com.code.exception.BankAccountNotExists;
-import com.code.exception.BankAlreadyAdded;
-import com.code.exception.NotAnyBankAddedYet;
-import com.code.exception.UserNotLogedinException;
-import com.code.model.BankAccount;
+import com.code.dto.request.bankAccount.BankAccountRequest;
+import com.code.dto.response.bankAccount.BankAccountResponse;
 import com.code.service.BankAccountService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @CrossOrigin(origins = "*")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/bank")
+@RequestMapping("/v1/banks")
 public class BankAccountController {
 
 	private final BankAccountService bankService;
 
-	@PostMapping("/{id}")
-	public ResponseEntity<BankAccount> addBankAccountToWallet(@RequestBody BankAccount bankaccount, @PathVariable String id)
-			throws BankAlreadyAdded, UserNotLogedinException {
-		return new ResponseEntity<>(bankaccount, HttpStatus.ACCEPTED);
+
+	@PostMapping("/{walletId}")
+	public ResponseEntity<BankAccountResponse> addBank(@RequestBody BankAccountRequest accountRequest) {
+		return ResponseEntity.ok(bankService.addBank(accountRequest));
 	}
 
-	@PatchMapping("/{acc}/{id}") //patchMapping as like put mapping
-	public ResponseEntity<BankAccount> deleteBankAccountFromWallet(@PathVariable("acc") Integer accountNumber,
-			@PathVariable("id") String uniqueId) throws BankAccountNotExists, UserNotLogedinException {
-		BankAccount accountDeleted = bankService.removeBank(accountNumber, uniqueId);
-		return new ResponseEntity<>(accountDeleted, HttpStatus.ACCEPTED);
+
+	@GetMapping("/find")
+	public ResponseEntity<List<BankAccountResponse>> findAll() {
+		return ResponseEntity.ok(bankService.findAll());
 	}
 
-	@GetMapping("/{acc}/{id}")
-	public ResponseEntity<BankAccount> viewBankAccountDetails(@PathVariable("acc") Integer accountNumber,
-			@PathVariable("id") String uniqueId) throws BankAccountNotExists, UserNotLogedinException {
-		BankAccount accountDetails = bankService.viewBankAccountI(accountNumber, uniqueId);
-		return new ResponseEntity<>(accountDetails, HttpStatus.ACCEPTED);
+	@GetMapping("/{bankId}")
+	public ResponseEntity<BankAccountResponse> findById(@PathVariable Long bankId) {
+		return ResponseEntity.ok(bankService.findById(bankId));
 	}
 
-	@GetMapping("/{id}")
-	public ResponseEntity<BankAccount> viewAllAccountDetails(@PathVariable("id") String uniqueId)
-			throws NotAnyBankAddedYet, UserNotLogedinException, BankAccountNotExists {
-		BankAccount accountDetails = bankService.viewAllAccount(uniqueId);
-		return new ResponseEntity<>(accountDetails, HttpStatus.ACCEPTED);
+	@PutMapping("/{bankId}")
+	public ResponseEntity<BankAccountResponse> update(@PathVariable Long bankId,
+													  @RequestBody BankAccountRequest accountRequest) {
+		return ResponseEntity.ok(bankService.update(bankId, accountRequest));
+	}
+
+	@DeleteMapping("/{bankId}")
+	public ResponseEntity<BankAccountResponse> delete(@PathVariable Long bankId) {
+		return ResponseEntity.ok(bankService.delete(bankId));
 	}
 
 }
