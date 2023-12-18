@@ -20,7 +20,7 @@ import javax.validation.constraints.Size;
 public class LogIn {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long userId;
 
 	@NotNull
@@ -30,6 +30,6 @@ public class LogIn {
 
 	@NotNull
 	@Pattern(regexp = "[a-zA-Z0-9]{6,12}", message = "Password must contain between 6 to 12 characters. " +
-			"Must be alphanumeric with both Upper and lowercase characters.")
+			"Must be alphanumeric with both upper and lowercase characters.")
 	private String password;
 }

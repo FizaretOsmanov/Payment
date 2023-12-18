@@ -1,5 +1,8 @@
 package com.code.dto.response.login;
 
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -10,6 +13,8 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class LoginResponse {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long userId;
 
     String mobileNo;

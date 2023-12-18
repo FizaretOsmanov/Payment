@@ -1,7 +1,9 @@
 package com.code.dto.response.customer;
 
 import com.code.dto.response.wallet.WalletResponse;
-import com.code.model.Wallet;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -12,6 +14,8 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CustomerResponse {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long userId;
 
     String userName;
@@ -22,6 +26,5 @@ public class CustomerResponse {
 
     String password;
 
-    WalletResponse walletResponse;
-
+    WalletResponse wallet;
 }

@@ -1,9 +1,7 @@
 package com.code.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -30,6 +28,9 @@ public class BillPayment {
 
 	private LocalDateTime time;
 
-	private Long walletId;
+	@ManyToOne
+	@JsonIgnore
+	@ToString.Exclude
+	private Wallet wallet;
 
 }

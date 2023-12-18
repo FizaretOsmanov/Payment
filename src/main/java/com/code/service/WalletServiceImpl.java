@@ -105,7 +105,6 @@ public class WalletServiceImpl implements WalletService {
         transaction.setTransactionDate(LocalDateTime.now());
         transaction.setAmount(amount);
 		transaction.setDescription("Transfer from Wallet to Wallet Successful !");
-        transaction.setWalletId(wallet.getWalletId());
         wallet.getTransaction().add(transaction);
 		transactionRepository.save(transaction);
 
@@ -141,7 +140,6 @@ public class WalletServiceImpl implements WalletService {
 		transaction1.setTransactionDate(LocalDateTime.now());
 		transaction1.setAmount(amount);
 		transaction1.setDescription("Fund Transfer from Wallet to Bank is successful!");
-		transaction1.setWalletId(wallet.getWalletId());
 		wallet.getTransaction().add(transaction1);
 		transactionRepository.save(transaction1);
 		return modelMapper.map(transaction1, TransactionResponse.class);
@@ -177,7 +175,6 @@ public class WalletServiceImpl implements WalletService {
         transaction.setAmount(amount);
 
         transaction.setDescription("Fund Transfer from Bank to Wallet is successful!");
-        transaction.setWalletId(wallet.getWalletId());
         
         wallet.getTransaction().add(transaction);
 		transactionRepository.save(transaction);

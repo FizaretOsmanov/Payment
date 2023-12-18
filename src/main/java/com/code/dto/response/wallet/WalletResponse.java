@@ -7,6 +7,7 @@ import com.code.model.Transaction;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Builder
@@ -19,6 +20,14 @@ public class WalletResponse {
     Long id;
 
     Double balance;
+
+    String walletName;
+
+    String accountNumber;
+
+    LocalDateTime endTime;
+
+    Long cvv;
 
     Customer customer;
 

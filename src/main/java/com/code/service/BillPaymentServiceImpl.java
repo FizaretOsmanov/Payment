@@ -57,7 +57,6 @@ public class BillPaymentServiceImpl implements BillPaymentService {
 				.amount(billPayment.getAmount())
 				.transactionDate(billPayment.getTime())
 				.transactionType(billPayment.getTransactionType())
-				.walletId(wallet.getWalletId())
 				.build();
 		transactionRepository.save(transaction);
 		System.out.println(billPayment);

@@ -15,10 +15,11 @@ import javax.validation.constraints.Size;
 @Builder
 @AllArgsConstructor
 @RequiredArgsConstructor
+@Table(name = "customer")
 public class Customer {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long userId;
 
 	private String userName;
@@ -26,8 +27,6 @@ public class Customer {
 	@NotNull
 	@Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}$", message = "Invalid email format")
 	private String email;
-
-	private Double balance;
 
 	@NotNull
 	@Size(min = 10, max = 10)
@@ -38,7 +37,9 @@ public class Customer {
 	@Pattern(regexp = "[a-zA-Z0-9]{6,12}", message = "Password must contain between 6 to 12 characters. " +
 			"Must be alphanumeric with both Upper and lowercase characters.")
 	private String password;
-	
+
+	boolean isEnabled;
+
 	@JsonIgnore
 	@OneToOne(optional = false, cascade = CascadeType.ALL)
 	private Wallet wallet;

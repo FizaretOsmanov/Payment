@@ -17,7 +17,7 @@ public class WalletRequest {
 
      Long accountNumber;
 
-     @JsonFormat(pattern = "dd.MM.yyyy")
+     @JsonFormat(pattern = "MM/yyyy")
      LocalDateTime endTime;
 
      Integer cvv;

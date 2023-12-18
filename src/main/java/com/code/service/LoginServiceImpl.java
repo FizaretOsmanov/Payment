@@ -9,7 +9,6 @@ import com.code.model.LogIn;
 import com.code.repository.CustomerRepository;
 import com.code.repository.LogInRepository;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -22,41 +21,50 @@ public class LoginServiceImpl implements LoginService {
 
 	private final LogInRepository logInRepository;
 
-	private final ModelMapper modelMapper;
-
 	@Override
 	public LoginResponse logInAccount(LoginRequest loginData) {
+		// Find the customer by mobile number
 		Optional<Customer> customer = customerRepository.findByMobileNo(loginData.getMobileNo());
 
-		if (customer.isPresent()) {
-			throw new ApplicationException(Errors.USER_EXISTS);
+		// If customer not found, throw an exception
+		if (customer.isEmpty()) {
+			throw new ApplicationException(Errors.USER_NOT_FOUND);
 		}
 
-		Customer newSignUp = customer.get();
+		// Retrieve the customer from Optional
+		Customer existingCustomer = customer.get();
 
-		System.out.println(newSignUp);
+		// Print for debugging (optional)
+		System.out.println(existingCustomer);
 
-		System.out.println(loginData.getMobileNo());
-		Long newSignUpId = newSignUp.getUserId();
-		Optional<Customer> currentSessionUser = customerRepository.findByUserId(newSignUpId);
+		// Get the user ID from the existing customer
+		Long existingCustomerId = existingCustomer.getUserId();
 
+		// Check if a session already exists for the user
+		Optional<Customer> currentSessionUser = customerRepository.findByUserId(existingCustomerId);
+
+		// If a session already exists, throw an exception
 		if (currentSessionUser.isPresent()) {
 			throw new ApplicationException(Errors.USER_EXISTS);
 		}
-		if ((newSignUp.getMobileNo().equals(loginData.getMobileNo()))
-				&& newSignUp.getPassword().equals(loginData.getPassword())) {
+
+		// Check if the provided password matches the stored password
+		if (existingCustomer.getPassword().equals(loginData.getPassword())) {
+			// Save the login details
 			LogIn savedUser = LogIn.builder()
 					.mobileNo(loginData.getMobileNo())
 					.password(loginData.getPassword())
 					.build();
+
 			logInRepository.save(savedUser);
 
+			// Return a success message
 			return LoginResponse.builder()
-					.message(String.format("User registered successfully : &s", savedUser.getMobileNo()))
+					.message(String.format("User logged in successfully: %s", savedUser.getMobileNo()))
 					.build();
 		} else {
+			// If the passwords don't match, throw an exception
 			throw new ApplicationException(Errors.PASSWORD_DID_NOT_MATCH);
 		}
-
 	}
 }

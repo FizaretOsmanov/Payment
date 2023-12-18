@@ -1,15 +1,11 @@
 package com.code.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -29,18 +25,24 @@ public class Wallet {
 
 	private Double balance;
 
+	private Integer cvv;
+
+	@JsonIgnore
+	@JsonFormat(pattern = "MM/yyyy")
+	private LocalDateTime endTime;
+
 	@OneToOne(cascade = CascadeType.ALL)
 	private Customer customer;
 
-	@OneToMany
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "wallet")
 	@JsonIgnore
 	private List<Transaction> transaction;
 
-	@OneToMany
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "wallet")
 	@JsonIgnore
 	private List<BillPayment> billPayments;
 
-	@OneToMany
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "wallet")
 	@JsonIgnore
 	private List<BeneficiaryDetail> beneficiaryDetails;
 

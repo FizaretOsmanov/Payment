@@ -3,11 +3,8 @@ package com.code.controllers;
 import com.code.dto.request.wallet.WalletRequest;
 import com.code.dto.response.transaction.TransactionResponse;
 import com.code.dto.response.wallet.WalletResponse;
-import com.code.model.Customer;
-import com.code.model.Wallet;
 import com.code.service.WalletService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "*")

@@ -44,7 +44,7 @@ public enum Errors implements ErrorResponse {
 
     @Override
     public String getMessage() {
-        return null;
+        return message;
     }
 
     @Override

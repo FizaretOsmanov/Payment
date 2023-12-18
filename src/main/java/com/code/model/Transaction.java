@@ -1,6 +1,7 @@
 package com.code.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -31,13 +32,16 @@ public class Transaction {
     private Double amount;
     
 	private String description;
-    
-    private Long  walletId;
 
     @Override
 	public String toString() {
 		return "Transaction [transactionId=" + transactionId + ", transactionType=" + transactionType
-				+ ", transactionDate=" + transactionDate + ", amount=" + amount + ", description=" + description
-				+ ", walletId=" + walletId + "]";
+				+ ", transactionDate=" + transactionDate + ", amount=" + amount + ", description=" + description + "]";
 	}
+
+    @ManyToOne
+    @JsonIgnore
+    @ToString.Exclude
+    private Wallet wallet;
+
 }
